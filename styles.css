@@ -87,10 +87,10 @@ footer {
 }
 
 .about-photo {
-  width: 50px;       /* Try 100–150px depending on preference */
-  height: auto;
-  border-radius: 0;   /* Keeps it square */
-  object-fit: cover;
+  width: 100px !important;
+  height: auto !important;
+  border-radius: 0 !important;
+  object-fit: cover !important;
 }
 
 /* Optional: Responsive layout for mobile */
