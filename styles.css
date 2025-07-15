@@ -87,10 +87,11 @@ footer {
 }
 
 .about-photo {
-  width: 120px !important;
-  height: auto !important;
-  border-radius: 0 !important;
-  object-fit: cover !important;
+  float: left;               /* Float image to the left */
+  width: 120px;              /* Adjust size */
+  margin: 0 20px 10px 0;     /* Space between image and text */
+  border-radius: 0;          /* Keep square shape */
+  object-fit: cover;         /* Ensure the image fills its box */
 }
 
 /* Optional: Responsive layout for mobile */
@@ -101,5 +102,13 @@ footer {
 
   .about-photo {
     align-self: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .about-photo {
+    float: none;
+    display: block;
+    margin: 0 auto 20px;
   }
 }
