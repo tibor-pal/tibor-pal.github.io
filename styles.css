@@ -79,3 +79,30 @@ footer {
   padding: 20px;
   background-color: #f9f9f9;
 }
+
+.about-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.about-section p {
+  flex: 1;
+}
+
+.about-photo {
+  width: 180px;
+  height: auto;
+  border-radius: 0; /* no circle */
+  object-fit: cover;
+}
+
+@media (max-width: 600px) {
+  .about-section {
+    flex-direction: column;
+  }
+
+  .about-photo {
+    align-self: center;
+  }
+}
