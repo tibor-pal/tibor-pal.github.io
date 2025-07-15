@@ -86,17 +86,14 @@ footer {
   gap: 20px;
 }
 
-.about-section p {
-  flex: 1;
-}
-
 .about-photo {
   width: 180px;
   height: auto;
-  border-radius: 0; /* no circle */
+  border-radius: 0; /* no circular shape */
   object-fit: cover;
 }
 
+/* Optional: Responsive layout for mobile */
 @media (max-width: 600px) {
   .about-section {
     flex-direction: column;
