@@ -1,3 +1,2 @@
-git rm -r --cached _site
-git commit -m "Remove _site folder from tracking"
-git push
+_site/
+.jekyll-cache/
