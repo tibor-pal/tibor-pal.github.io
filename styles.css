@@ -88,7 +88,7 @@ footer {
 
 .about-photo {
   float: left;               /* Float image to the left */
-  width: 120px;              /* Adjust size */
+  width: 150px;              /* Adjust size */
   margin: 0 20px 10px 0;     /* Space between image and text */
   border-radius: 0;          /* Keep square shape */
   object-fit: cover;         /* Ensure the image fills its box */
