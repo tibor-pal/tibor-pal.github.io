@@ -1,33 +1,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Tibor Pal — Academic Profile</title>
+  <title>Tibor Pál — Academic Profile</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tibor Pál</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Tibor Pal</h1>
-  <p>Work in Progress.</p>
+  <!--<h1>Tibor Pál</h1>-->
+  <!--<p>Work in Progress.</p>-->
   <div class="container">
     <aside class="sidebar">
-      <img src="profile_tibor-pal.jpg" alt="Tibor Pál">
+    <!--  <img src="profile_tibor-pal.jpeg" alt="Tibor Pál" class="profile-photo">-->
       <h1>Tibor Pál</h1>
-      <p>PhD Candidate in Economic Statistics</p>
+      <p>PhD Candidate in Statistical Methods in Economics</p>
       <nav>
-        <a href="#research">About</a>
+        <a href="#about">About</a>
         <a href="#research">Research interests</a>
         <a href="#publications">Publications</a>
       </nav>
     </aside>
 
     <main class="content">
-      <section id="research">
-        <h2>Research</h2>
-        <p>To be filled..</p>
+
+      <section id="about" class="section" style="display: block;">
+        <h2>About</h2>
+        <div class="about-container">
+          <img src="profile_tibor-pal.jpeg" alt="Tibor Pál" class="profile-photo">
+          <p>
+            Tibor Pál is a PhD candidate in Statistical Methods in Economics at the University of Salerno, specializing in Score-Driven Models, State-Space Models, Kalman Filter, and Volatility Modeling.
+          </p>
+        </div>
       </section>
 
-      <section id="publications">
+      <section id="research" class="section" style="display: none;">
+        <h2>Research interests</h2>
+        <p>State Space Models, Kalman Filter, and Volatility Modeling.</p>
+      </section>
+
+      <section id="publications" class="section" style="display: none;">
         <h2>Publications</h2>
         <ul>
           <li><a href="papers/paper1.pdf">Monetary policy models: lessons from the Eurozone crisis</a></li>
@@ -36,6 +47,12 @@
       </section>
     </main>
   </div>
+
+  <nav>
+    <a href="#" onclick="showSection('about')">About</a>
+    <a href="#" onclick="showSection('research')">Research interests</a>
+    <a href="#" onclick="showSection('publications')">Publications</a>
+  </nav>
 
   <footer>
     <p>&copy; 2025 Tibor Pál</p>
