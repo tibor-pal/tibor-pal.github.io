@@ -1,47 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tibor Pál</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div class="container">
-    <aside class="sidebar">
-  <!--    <img src="profile_tibor-pal.jpeg" alt="Tibor Pál" class="profile-photo"> -->
-      <h1>Tibor Pál</h1>
-      <p>PhD Candidate in Economic Statistics</p>
-      <nav>
-        <a href="#research">About</a>
-        <a href="#research">Research interests</a>
-        <a href="#publications">Publications</a>
-      </nav>
-    </aside>
+<aside class="sidebar">
+  <h1>Tibor Pál</h1>
+  <p>PhD Candidate in Statistical Methods in Economics</p>
+  <nav>
+    <a href="#" onclick="showContent('about')">About</a>
+    <a href="#" onclick="showContent('research')">Research Interests</a>
+    <a href="#" onclick="showContent('publications')">Publications</a>
+  </nav>
+</aside>
 
-    <main class="content">
+<main class="content">
+  <section id="about" class="content-section">
+    <h2>About Me</h2>
+    <p>In progress.</p>
+  </section>
 
-      
-      <section id="research">
-       <h2>About Me</h2>
-       <img src="profile_tibor-pal.jpeg" alt="Tibor Pál" class="about-photo">
-       <div class="about-section">
-       <p>In progress.</p>
-       </div>
-      </section>
+  <section id="research" class="content-section" style="display: none;">
+    <h2>Research Interests</h2>
+    <p>In progress.</p>
+  </section>
 
-      <section id="publications">
-        <h2>Publications</h2>
-        <ul>
-          <li><a href="papers/paper1.pdf">Monetary policy models: lessons from the Eurozone crisis</a></li>
-          <!-- ... -->
-        </ul>
-      </section>
-    </main>
-  </div>
-
-  <footer>
-    <p>&copy; 2025 Tibor Pál</p>
-  </footer>
-</body>
-</html>
+  <section id="publications" class="content-section" style="display: none;">
+    <h2>Publications</h2>
+    <ul>
+      <li><a href="papers/paper1.pdf">Monetary policy models: lessons from the Eurozone crisis</a></li>
+    </ul>
+  </section>
+</main>
