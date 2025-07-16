@@ -112,3 +112,11 @@ footer {
     margin: 0 auto 20px;
   }
 }
+
+.content-section {
+  display: none;
+}
+
+.content-section.active {
+  display: block;
+}
