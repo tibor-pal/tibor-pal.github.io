@@ -1,5 +1,3 @@
-_site
-.sass-cache
-.jekyll-cache
-.jekyll-metadata
-vendor
+git rm -r --cached _site
+git commit -m "Remove _site folder from tracking"
+git push

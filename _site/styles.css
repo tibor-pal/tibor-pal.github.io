@@ -1,0 +1,122 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.container {
+  display: flex;
+  min-height: 90vh;
+}
+
+.sidebar {
+  flex: 0 0 260px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.sidebar img {
+  width: 150px;
+  height: auto;
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+.sidebar h1 {
+  margin-bottom: 5px;
+  font-size: 24px;
+}
+
+.sidebar nav a {
+  display: block;
+  margin: 10px 0;
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.content {
+  flex: 1;
+  padding: 30px;
+}
+
+.content section {
+  margin-bottom: 40px;
+}
+
+footer {
+  padding: 10px;
+  text-align: center;
+  background: #eee;
+}
+
+/* Mobile layout */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+}
+
+.profile-photo {
+  width: 150px;
+  height: auto;
+  border-radius: 50%; /* optional */
+  margin-bottom: 15px;
+}
+
+.sidebar {
+  text-align: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.about-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.about-photo {
+  float: left;               /* Float image to the left */
+  width: 150px;              /* Adjust size */
+  margin: 0 20px 10px 0;     /* Space between image and text */
+  border-radius: 0;          /* Keep square shape */
+  object-fit: cover;         /* Ensure the image fills its box */
+}
+
+/* Optional: Responsive layout for mobile */
+@media (max-width: 600px) {
+  .about-section {
+    flex-direction: column;
+  }
+
+  .about-photo {
+    align-self: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .about-photo {
+    float: none;
+    display: block;
+    margin: 0 auto 20px;
+  }
+}
+
+.content-section {
+  display: none;
+}
+
+.content-section.active {
+  display: block;
+}
