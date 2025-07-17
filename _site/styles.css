@@ -270,3 +270,38 @@ a:hover {
   margin-bottom: 1.2em;     /* controls space between paragraphs */
   color: #333;
 }
+
+@media (max-width: 768px) {
+  .container {
+    display: block;
+  }
+
+  .sidebar {
+    width: 100%;
+    text-align: center;
+  }
+
+  .content {
+    width: 100%;
+  }
+}
+
+/* General layout stays centered on desktop */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Make chart wrapper scrollable horizontally on small screens */
+.chart-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure canvas doesn't shrink and enables scrolling if too wide */
+canvas.responsive-canvas {
+  min-width: 800px; /* keep this wide enough for plots */
+  max-width: 100%;  /* don't exceed container width */
+  display: block;
+}
