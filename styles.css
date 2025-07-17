@@ -286,22 +286,40 @@ a:hover {
   }
 }
 
-/* General layout stays centered on desktop */
+/* Keep layout centered */
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
-/* Make chart wrapper scrollable horizontally on small screens */
+/* Chart wrapper: scrollable on small screens */
 .chart-wrapper {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-/* Ensure canvas doesn't shrink and enables scrolling if too wide */
+/* Make canvas responsive, scrollable if too wide */
 canvas.responsive-canvas {
-  min-width: 800px; /* keep this wide enough for plots */
-  max-width: 100%;  /* don't exceed container width */
+  min-width: 800px;
+  max-width: 120%;
   display: block;
+  height: auto;
+}
+
+/* Default: no horizontal scroll (desktop) */
+.chart-wrapper {
+  overflow-x: visible;
+}
+
+/* Only apply scroll behavior on narrow screens */
+@media (max-width: 768px) {
+  .chart-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  canvas.responsive-canvas {
+    min-width: 800px;
+  }
 }
