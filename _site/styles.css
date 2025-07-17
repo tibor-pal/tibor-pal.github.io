@@ -212,38 +212,28 @@ button:hover {
 .chart-wrapper {
   display: flex;
   justify-content: center;
-  overflow-x: hidden;
   width: 100%;
-  margin-bottom: 2em;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  padding: 0 10px; /* optional horizontal padding */
 }
 
-/* Canvas responsive sizing */
 canvas.responsive-canvas {
   width: 100%;
   height: auto;
   max-width: 800px;
+  box-sizing: border-box;
 }
 
-/* Responsive override for mobile */
+/* Mobile: allow horizontal scroll */
 @media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    text-align: center;
-  }
-
-  .content {
-    width: 100%;
-  }
-
   .chart-wrapper {
     overflow-x: auto;
+    justify-content: flex-start; /* aligns left for scrolling */
   }
 
   canvas.responsive-canvas {
     min-width: 800px;
+    margin: 0 auto; /* ensures visual centering when scrolling */
   }
 }
