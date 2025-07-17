@@ -293,33 +293,28 @@ a:hover {
   padding: 0 20px;
 }
 
-/* Chart wrapper: scrollable on small screens */
+/* Desktop default: centered layout */
 .chart-wrapper {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  display: flex;
+  justify-content: center;
+  overflow-x: hidden;
+  width: 100%;
 }
 
-/* Make canvas responsive, scrollable if too wide */
+/* Canvas adapts to container width on desktop */
 canvas.responsive-canvas {
-  min-width: 800px;
-  max-width: 120%;
-  display: block;
+  width: 100%;
   height: auto;
+  max-width: 800px; /* limits plot size on large screens */
 }
 
-/* Default: no horizontal scroll (desktop) */
-.chart-wrapper {
-  overflow-x: visible;
-}
-
-/* Only apply scroll behavior on narrow screens */
+/* Mobile override: allow scroll & expand canvas if needed */
 @media (max-width: 768px) {
   .chart-wrapper {
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
   }
 
   canvas.responsive-canvas {
-    min-width: 800px;
+    min-width: 800px; /* allows full plot to scroll */
   }
 }
