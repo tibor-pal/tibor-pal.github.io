@@ -108,8 +108,33 @@
       const json = XLSX.utils.sheet_to_json(worksheet);
 
       // Convert to chart format: {x: Date, y: Number}
-      const parsed_rStar = json.map(row => ({ x: new Date(row.Date), y: row.rStar }));
-      const parsed_rStar_sm = json.map(row => ({ x: new Date(row.Date), y: row.rStar_sm }));
+      function excelDateToJSDate(serial) {
+        // Excel serial to JS Date
+        const utc_days = serial - 25569;
+        const utc_value = utc_days * 86400;
+        return new Date(utc_value * 1000);
+      }
+
+      const parsed_rStar = json.map(row => {
+        let date = row.Date;
+        if (typeof date === 'number') {
+          date = excelDateToJSDate(date);
+        } else {
+          // Date might be a string like "01/01/1961"
+          date = new Date(date);
+        }
+        return { x: date, y: row.rStar };
+      });
+
+      const parsed_rStar_sm = json.map(row => {
+        let date = row.Date;
+        if (typeof date === 'number') {
+          date = excelDateToJSDate(date);
+        } else {
+          date = new Date(date);
+        }
+        return { x: date, y: row.rStar_sm };
+      });
 
       return { parsed_rStar, parsed_rStar_sm };
     } catch (error) {
