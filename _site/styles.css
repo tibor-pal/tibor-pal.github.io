@@ -282,3 +282,33 @@ canvas.responsive-canvas {
 body {
   overflow-x: hidden;
 }
+
+.chart-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  overflow-x: auto;
+}
+
+canvas {
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.chart-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  overflow-x: auto;
+}
+
+canvas {
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+}
