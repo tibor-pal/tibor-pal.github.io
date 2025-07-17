@@ -37,7 +37,7 @@ function createChart() {
   });
 }
 
-function showSection(id) {
+/*function showSection(id) {
   document.querySelectorAll('.section').forEach(section => {
     section.classList.remove('active');
   });
@@ -51,4 +51,38 @@ function showSection(id) {
       timeChart.resize();
     }
   }
+}*/
+
+function showSection(id) {
+  // Hide all sections
+  document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+  // Show target section
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
+
+  // Remove active class from all links
+  document.querySelectorAll('.sidebar nav a').forEach(link => link.classList.remove('active'));
+
+  // Add active to the correct link
+  document.querySelectorAll('.sidebar nav a').forEach(link => {
+    // Extract the id from the onclick attribute
+    const onclickAttr = link.getAttribute('onclick');
+    if (onclickAttr && onclickAttr.includes(`showSection('${id}')`)) {
+      link.classList.add('active');
+    }
+  });
+
+  history.replaceState({ section: id }, '', `?section=${id}`);
+
+  if (id === 'estimates' && !window.timeChart) {
+    setTimeout(() => createChart(), 50);
+  }
 }
+
+
+document.querySelectorAll('.sidebar nav a').forEach(link => {
+  link.classList.remove('active');
+  if (link.dataset.section === id) {
+    link.classList.add('active');
+  }
+});
