@@ -25,12 +25,14 @@
       <nav>
         <a href="#" onclick="showSection('about'); return false;">ABOUT</a>
         <a href="#" onclick="showSection('research'); return false;">RESEARCH INTEREST</a>
-        <a href="#" onclick="showSection('publications'); return false;">PUBLICATIONS</a>
-        <a href="#" onclick="showSection('results'); return false;">RESULTS</a>
+        <a href="#" onclick="showSection('publications'); return false;">PUBLICATIONS / WORKING PAPERS</a>
+        <a href="#" onclick="showSection('estimates'); return false;">ESTIMATES</a>
       </nav>
     </aside>
 
     <main class="content">
+
+
       <section id="about" class="section active">
         <h2>ABOUT</h2>
         <p>
@@ -49,16 +51,54 @@
       </section>
 
       <section id="publications" class="section">
-        <h2>PUBLICATIONS</h2>
+        <h2>PUBLICATIONS AND WORKING PAPERS</h2>
         <ul>
           <li><a href="papers/paper1.pdf">Monetary policy models: lessons from the Eurozone crisis</a></li>
         </ul>
       </section>
 
-      <section id="results" class="section">
-        <h2>RESULTS</h2>
-        <canvas id="timeChart" width="800" height="400"></canvas>
+      <section id="estimates" class="section">
+        <h2>ESTIMATES</h2>
+
+        <!-- Horizontal Buttons -->
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <button onclick="showResultTab('rstar')" title="Estimated natural interest rate over time">R-Star</button>
+          <button onclick="showResultTab('phillips')">Phillips Curve</button>
+          <button onclick="showResultTab('isCurve')">IS Curve</button>
+          <button onclick="showResultTab('volatility')">Inflation Volatility</button>
+        </div>
+
+        <!-- Content Panels -->
+        <div id="rstar" class="result-tab">
+          <canvas id="timeChart" width="800" height="400"></canvas>
+        </div>
+
+        <div id="outputGap" class="result-tab" style="display:none;">
+          <p>Output Gap content coming soon.</p>
+        </div>
+
+        <div id="phillips" class="result-tab" style="display:none;">
+          <p>Phillips Curve content coming soon.</p>
+        </div>
+
+        <div id="isCurve" class="result-tab" style="display:none;">
+          <p>IS Curve content coming soon.</p>
+        </div>
+
+        <div id="volatility" class="result-tab" style="display:none;">
+          <p>Inflation Volatility content coming soon.</p>
+        </div>
+
+        <!-- Shared Source Note -->
+        <p style="font-size: 14px; margin-bottom: 20px; color: #666;">
+          Source: Calculations use the methodology (aaGAS specification) outlined in
+          <a href="https://mpra.ub.uni-muenchen.de/125338/1/MPRA_paper_125338.pdf" target="_blank">
+            <em>Pál, Tibor and Storti, Giuseppe: Estimating the R-Star in the US: A Score-Driven State-Space Model with Time-Varying Volatility Persistence (2025, Working Paper)</em>
+          </a>.
+        </p>
+
       </section>
+
     </main>
   </div>
 
@@ -66,172 +106,238 @@
     <p>&copy; 2025 Tibor Pál</p>
   </footer>
 
-<script>
-  const startYear = 1961, endYear = 2024;
+  <script>
+    const startYear = 1961, endYear = 2024;
 
-  const recessions = [
-    { start: new Date(1973, 10, 1), end: new Date(1975, 3, 1) },
-    { start: new Date(1980, 0, 1), end: new Date(1980, 6, 1) },
-    { start: new Date(1981, 6, 1), end: new Date(1982, 10, 1) },
-    { start: new Date(1990, 6, 1), end: new Date(1991, 2, 1) },
-    { start: new Date(2001, 2, 1), end: new Date(2001, 10, 1) },
-    { start: new Date(2007, 11, 1), end: new Date(2009, 5, 1) },
-    { start: new Date(2020, 1, 1), end: new Date(2020, 6, 1) }
-  ];
+    const recessions = [
+      { start: new Date(1973, 10, 1), end: new Date(1975, 3, 1)  },
+      { start: new Date(1980, 0, 1),  end: new Date(1980, 6, 1)  },
+      { start: new Date(1981, 6, 1),  end: new Date(1982, 10, 1) },
+      { start: new Date(1990, 6, 1),  end: new Date(1991, 2, 1)  },
+      { start: new Date(2001, 2, 1),  end: new Date(2001, 10, 1) },
+      { start: new Date(2007, 11, 1), end: new Date(2009, 5, 1)  },
+      { start: new Date(2020, 1, 1),  end: new Date(2020, 6, 1)  }
+    ];
 
-  const recessionPlugin = {
-    id: 'recessionPlugin',
-    beforeDatasetsDraw(chart) {
-      const { ctx, chartArea: { top, bottom }, scales: { x } } = chart;
-      ctx.save();
-      ctx.fillStyle = 'rgba(200, 0, 0, 0.1)';
-      recessions.forEach(({ start, end }) => {
-        const xStart = x.getPixelForValue(start);
-        const xEnd = x.getPixelForValue(end);
-        ctx.fillRect(xStart, top, xEnd - xStart, bottom - top);
-      });
-      ctx.restore();
+    const recessionPlugin = {
+      id: 'recessionPlugin',
+      beforeDatasetsDraw(chart) {
+        const { ctx, chartArea: { top, bottom }, scales: { x } } = chart;
+        ctx.save();
+        ctx.fillStyle = 'rgba(200, 0, 0, 0.1)';
+        recessions.forEach(({ start, end }) => {
+          const xStart = x.getPixelForValue(start);
+          const xEnd = x.getPixelForValue(end);
+          ctx.fillRect(xStart, top, xEnd - xStart, bottom - top);
+        });
+        ctx.restore();
+      }
+    };
+
+    let timeChart = null;
+
+    async function fetchAndParseExcel() {
+      try {
+        const response = await fetch('estimates_PS2025.xlsx');
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const json = XLSX.utils.sheet_to_json(worksheet);
+
+        function excelDateToJSDate(serial) {
+          const utc_days = serial - 25569;
+          const utc_value = utc_days * 86400;
+          return new Date(utc_value * 1000);
+        }
+
+        const parsed_rStar = json.map(row => {
+          let date = row.Date;
+          if (typeof date === 'number') date = excelDateToJSDate(date);
+          else date = new Date(date);
+          return { x: date, y: row.rStar };
+        });
+
+        const parsed_rStar_sm = json.map(row => {
+          let date = row.Date;
+          if (typeof date === 'number') date = excelDateToJSDate(date);
+          else date = new Date(date);
+          return { x: date, y: row.rStar_sm };
+        });
+
+        return { parsed_rStar, parsed_rStar_sm };
+      } catch (error) {
+        console.error('Error loading Excel file:', error);
+        return null;
+      }
     }
-  };
 
-  let timeChart = null;
+    async function createChart() {
+      const ctx = document.getElementById('timeChart').getContext('2d');
+      const data = await fetchAndParseExcel();
 
-  async function fetchAndParseExcel() {
-    try {
-      const response = await fetch('results_PS2025.xlsx');
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
-      const arrayBuffer = await response.arrayBuffer();
-      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const json = XLSX.utils.sheet_to_json(worksheet);
-
-      // Convert to chart format: {x: Date, y: Number}
-      function excelDateToJSDate(serial) {
-        // Excel serial to JS Date
-        const utc_days = serial - 25569;
-        const utc_value = utc_days * 86400;
-        return new Date(utc_value * 1000);
+      if (!data) {
+        console.warn('No data loaded, showing empty chart.');
+        timeChart = new Chart(ctx, {
+          type: 'line',
+          data: { datasets: [] },
+          options: {}
+        });
+        return;
       }
 
-      const parsed_rStar = json.map(row => {
-        let date = row.Date;
-        if (typeof date === 'number') {
-          date = excelDateToJSDate(date);
-        } else {
-          // Date might be a string like "01/01/1961"
-          date = new Date(date);
-        }
-        return { x: date, y: row.rStar };
-      });
-
-      const parsed_rStar_sm = json.map(row => {
-        let date = row.Date;
-        if (typeof date === 'number') {
-          date = excelDateToJSDate(date);
-        } else {
-          date = new Date(date);
-        }
-        return { x: date, y: row.rStar_sm };
-      });
-
-      return { parsed_rStar, parsed_rStar_sm };
-    } catch (error) {
-      console.error('Error loading Excel file:', error);
-      return null;
-    }
-  }
-
-  async function createChart() {
-    const ctx = document.getElementById('timeChart').getContext('2d');
-    const data = await fetchAndParseExcel();
-
-    if (!data) {
-      // If fail, show an empty chart or default data
-      console.warn('No data loaded, showing empty chart.');
       timeChart = new Chart(ctx, {
         type: 'line',
-        data: { datasets: [] },
-        options: {}
-      });
-      return;
-    }
-
-    timeChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        datasets: [
-          {
-            label: 'rStar',
-            data: data.parsed_rStar,
-            borderColor: '#0072BD',
-            borderWidth: 2,
-            fill: false,
-            tension: 0.1,
-            pointRadius: 0
-          },
-          {
-            label: 'rStar_sm',
-            data: data.parsed_rStar_sm,
-            borderColor: '#177245',
-            borderWidth: 2,
-            fill: false,
-            tension: 0.1,
-            pointRadius: 0
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          x: {
-            type: 'time',
-            time: {
-              unit: 'year',
-              stepSize: 5,
-              displayFormats: { year: 'yyyy' }
+        data: {
+          datasets: [
+            {
+              label: 'R-Star (filtered)',
+              data: data.parsed_rStar,
+              borderColor: '#0072BD',
+              borderWidth: 2,
+              fill: false,
+              tension: 0.1,
+              pointRadius: 0
             },
-            title: { display: true, text: 'Year', font: { size: 16 } },
-            ticks: { font: { size: 14 }, maxRotation: 0, autoSkip: true },
-            min: new Date(startYear, 0, 1),
-            max: new Date(endYear, 11, 31)
-          },
-          y: {
-            beginAtZero: true,
-            title: { display: true, text: 'Percent', font: { size: 16 } },
-            ticks: { font: { size: 14 } }
-          }
+            {
+              label: 'R-Star (smoothed)',
+              data: data.parsed_rStar_sm,
+              borderColor: '#177245',
+              borderWidth: 2,
+              fill: false,
+              tension: 0.1,
+              pointRadius: 0
+            }
+          ]
         },
-        plugins: {
-          legend: { labels: { font: { size: 14 } } },
-          tooltip: {
-            mode: 'index',
-            intersect: false,
-            callbacks: {
-              title: function (items) {
-                const date = new Date(items[0].parsed.x);
-                const quarter = Math.floor(date.getMonth() / 3) + 1;
-                return `${date.getFullYear()}: Q${quarter}`;
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: 'year',
+                stepSize: 5, // every 5 years
+                displayFormats: { year: 'yyyy' }
+              },
+              title: {
+                display: true,
+                text: 'Year',
+                font: { size: 16 }
+              },
+              min: new Date(startYear, 0, 1),
+              max: new Date(endYear, 11, 31),
+              ticks: {
+                font: { size: 14 },
+                maxRotation: 0,
+                autoSkip: false,
+                callback: function(value) {
+                  const year = new Date(value).getFullYear();
+                  return (year % 5 === 0 && year >= 1965) ? year : '';
+                }
+              },
+              grid: {
+            //    display: false
+                drawTicks: true,
+                drawOnChartArea: true,
+                tickLength: 6
+              }
+            },
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: 'Percent', font: { size: 12 } },
+              ticks: { font: { size: 14 } }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'The Natural Rate of Interest (R-Star) in the United States',
+              font: {
+                size: 18,
+                weight: 'bold'
+              },
+              padding: {
+                top: 10,
+                bottom: 20
+              }
+            },
+            legend: { labels: { font: { size: 14 } } },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              callbacks: {
+                title: function (items) {
+                  const date = new Date(items[0].parsed.x);
+                  const quarter = Math.floor(date.getMonth() / 3) + 1;
+                  return `${date.getFullYear()}: Q${quarter}`;
+                }
               }
             }
-          }
+          },
+          interaction: { mode: 'nearest', intersect: false }
         },
-        interaction: { mode: 'nearest', intersect: false }
-      },
-      plugins: [recessionPlugin]
+        plugins: [recessionPlugin]
+      });
+    }
+
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+      const target = document.getElementById(id);
+      if (target) target.classList.add('active');
+
+      history.replaceState({ section: id }, '', `?section=${id}`);
+
+      if (id === 'estimates' && !timeChart) {
+        setTimeout(() => createChart(), 50);
+      }
+    }
+
+    function showResultTab(tabId) {
+      document.querySelectorAll('.result-tab').forEach(tab => {
+        tab.style.display = 'none';
+      });
+
+      const selected = document.getElementById(tabId);
+      if (selected) {
+        selected.style.display = 'block';
+      }
+
+      if (tabId === 'rstar' && !window.timeChart) {
+        createChart();
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const section = new URLSearchParams(location.search).get('section') || 'about';
+      showSection(section);
     });
-  }
 
-  function showSection(id) {
-    document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
-    const target = document.getElementById(id);
-    if (target) target.classList.add('active');
+    window.addEventListener('popstate', (event) => {
+      const section = event.state?.section || 'about';
+      showSection(section);
+    });
+  </script>
 
-    history.replaceState(null, '', `?section=${id}`);
 
-    if (id === 'results' && !timeChart) {
-      setTimeout(() => createChart(), 50);
+  <script>
+  function showResultTab(tabId) {
+    // Hide all tabs
+    document.querySelectorAll('.result-tab').forEach(tab => {
+      tab.style.display = 'none';
+    });
+
+    // Show selected tab
+    const selected = document.getElementById(tabId);
+    if (selected) {
+      selected.style.display = 'block';
+    }
+
+    // If R-Star, make sure chart is initialized
+    if (tabId === 'rstar' && !window.timeChart) {
+      createChart();
     }
   }
 
@@ -245,6 +351,7 @@
     showSection(section);
   });
 </script>
+
 
 </body>
 </html>

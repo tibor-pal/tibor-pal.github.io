@@ -44,11 +44,11 @@ function showSection(id) {
   const target = document.getElementById(id);
   if (target) target.classList.add('active');
 
-  if (id === 'results') {
+  if (id === 'estimates') {
     if (!timeChart) {
-      createChart();  // create chart only once when results shown first time
+      createChart();
     } else {
-      timeChart.resize();  // resize chart if already created
+      timeChart.resize();
     }
   }
 }
