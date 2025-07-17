@@ -1,73 +1,198 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Tibor Pál — Academic Profile</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tibor Pál</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8" />
+<title>Tibor Pál — Academic Profile</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="styles.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+<style>
+  canvas {
+    max-width: 800px;
+    margin: 20px auto;
+    display: block;
+  }
+  .section {
+    display: none;
+  }
+  .section.active {
+    display: block;
+  }
+</style>
 </head>
 <body>
-  <!--<h1>Tibor Pál</h1>-->
-  <!--<p>Work in Progress.</p>-->
   <div class="container">
     <aside class="sidebar">
-    <!--  <img src="profile_tibor-pal.jpeg" alt="Tibor Pál" class="profile-photo">-->
       <h1>TIBOR PÁL</h1>
-  <!--    <p>PhD Candidate in Statistical Methods in Economics</p> -->
       <nav>
         <a href="#" onclick="showSection('about'); return false;">ABOUT</a>
         <a href="#" onclick="showSection('research'); return false;">RESEARCH INTEREST</a>
         <a href="#" onclick="showSection('publications'); return false;">PUBLICATIONS</a>
+        <a href="#" onclick="showSection('results'); return false;">RESULTS</a>
       </nav>
     </aside>
 
     <main class="content">
-
-      <section id="about" class="section" style="display: block;">
+      <section id="about" class="section active">
         <h2>ABOUT</h2>
         <p>
-          <img src="profile_tibor-pal.jpeg" alt="Tibor Pál" class="profile-photo">
-          Tibor Pál is a PhD candidate in Statistical Methods in Economics at the University of Salerno, specializing in Score-Driven Models, State-Space Models, Kalman Filter, and Volatility Modeling. Tibor Pál is a PhD candidate in Statistical Methods in Economics at the University of Salerno, specializing in Score-Driven Models, State-Space Models, Kalman Filter, and Volatility Modeling. Tibor Pál is a PhD candidate in Statistical Methods in Economics at the University of Salerno, specializing in Score-Driven Models, State-Space Models, Kalman Filter, and Volatility Modeling. Tibor Pál is a PhD candidate in Statistical Methods in Economics at the University of Salerno, specializing in Score-Driven Models, State-Space Models, Kalman Filter, and Volatility Modeling. Tibor Pál is a PhD candidate in Statistical Methods in Economics at the University of Salerno, specializing in Score-Driven Models, State-Space Models, Kalman Filter, and Volatility Modeling. Tibor Pál is a PhD candidate in Statistical Methods in Economics at the University of Salerno, specializing in Score-Driven Models, State-Space Models, Kalman Filter, and Volatility Modeling.
+          <img src="profile_tibor-pal.jpeg" alt="Tibor Pál" class="profile-photo" />
+          Tibor Pál is a PhD candidate in Statistical Methods in Economics at the University of Salerno, specializing in Score-Driven Models, State-Space Models, Kalman Filter, and Volatility Modeling.
         </p>
         <div class="about-links">
-            <a href="your_cv_link_here.pdf" target="_blank" rel="noopener noreferrer">CV</a> /
-            <a href="https://www.linkedin.com/in/tibor-pal11/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          </div>
+          <a href="your_cv_link_here.pdf" target="_blank" rel="noopener noreferrer">CV</a> /
+          <a href="https://www.linkedin.com/in/tibor-pal11/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        </div>
       </section>
 
-      <section id="research" class="section" style="display: none;">
+      <section id="research" class="section">
         <h2>RESEARCH INTERESTS</h2>
         <p>State Space Models, Kalman Filter, and Volatility Modeling.</p>
       </section>
 
-      <section id="publications" class="section" style="display: none;">
+      <section id="publications" class="section">
         <h2>PUBLICATIONS</h2>
         <ul>
           <li><a href="papers/paper1.pdf">Monetary policy models: lessons from the Eurozone crisis</a></li>
-          <!-- ... -->
         </ul>
+      </section>
+
+      <section id="results" class="section">
+        <h2>RESULTS</h2>
+        <canvas id="timeChart" width="800" height="400"></canvas>
       </section>
     </main>
   </div>
-
-<!--  <nav>
-    <a href="#" onclick="showSection('about')">About</a>
-    <a href="#" onclick="showSection('research')">Research interests</a>
-    <a href="#" onclick="showSection('publications')">Publications</a>
-  </nav> -->
 
   <footer>
     <p>&copy; 2025 Tibor Pál</p>
   </footer>
 
-  <script>
-    function showSection(id) {
-      const sections = document.querySelectorAll('.section');
-      sections.forEach(section => {
-        section.style.display = (section.id === id) ? 'block' : 'none';
-      });
-    }
-  </script>
+<script>
+  // Your variables and helper functions (dates, data, recessions)
 
+  const startYear = 1961;
+  const endYear = 2024;
+
+  function generateQuarterlyDates(startYear, endYear) {
+    const dates = [];
+    for(let year = startYear; year <= endYear; year++) {
+      for(let month of [0,3,6,9]) {
+        dates.push(new Date(year, month, 1));
+      }
+    }
+    return dates;
+  }
+
+  const dates = generateQuarterlyDates(startYear, endYear);
+
+  const r = dates.map((_, i) => 5 + 3 * Math.sin(i * 0.2));
+  const r_sm = dates.map((_, i) => 4 + 2 * Math.cos(i * 0.15));
+
+  const recessions = [
+    {start: new Date(1973,10,1), end: new Date(1975,3,1)},
+    {start: new Date(1980,0,1), end: new Date(1980,6,1)},
+    {start: new Date(1981,6,1), end: new Date(1982,10,1)},
+    {start: new Date(1990,6,1), end: new Date(1991,2,1)},
+    {start: new Date(2001,2,1), end: new Date(2001,10,1)},
+    {start: new Date(2007,11,1), end: new Date(2009,5,1)},
+    {start: new Date(2020,1,1), end: new Date(2020,6,1)}
+  ];
+
+  const recessionPlugin = {
+    id: 'recessionPlugin',
+    beforeDatasetsDraw(chart) {
+      const {ctx, chartArea: {left, right, top, bottom}, scales: {x}} = chart;
+      ctx.save();
+      ctx.fillStyle = 'rgba(200, 0, 0, 0.1)';
+      recessions.forEach(({start, end}) => {
+        const xStart = x.getPixelForValue(start);
+        const xEnd = x.getPixelForValue(end);
+        ctx.fillRect(xStart, top, xEnd - xStart, bottom - top);
+      });
+      ctx.restore();
+    }
+  };
+
+  let timeChart = null;  // hold the chart instance
+
+  function createChart() {
+    const ctx = document.getElementById('timeChart').getContext('2d');
+    timeChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: dates,
+        datasets: [
+          {
+            label: 'r',
+            data: r,
+            borderColor: '#0072BD',
+            borderWidth: 2,
+            fill: false,
+            tension: 0.1,
+            pointRadius: 0,
+          },
+          {
+            label: 'r_sm',
+            data: r_sm,
+            borderColor: '#177245',
+            borderWidth: 2,
+            fill: false,
+            tension: 0.1,
+            pointRadius: 0,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            type: 'time',
+            time: {
+              unit: 'year',
+              stepSize: 5,
+              displayFormats: { year: 'yyyy' }
+            },
+            title: { display: true, text: 'Year', font: { size: 16 } },
+            ticks: { font: { size: 14 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 15 },
+            min: new Date(startYear, 0, 1),
+            max: new Date(endYear, 11, 31),
+            grid: { display: true }
+          },
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Percent', font: { size: 16 } },
+            ticks: { font: { size: 14 } },
+            grid: { display: true }
+          }
+        },
+        plugins: {
+          legend: { labels: { font: { size: 14 } } },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        interaction: { mode: 'nearest', intersect: false }
+      },
+      plugins: [recessionPlugin]
+    });
+  }
+
+  // Section switching with lazy chart init
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(section => {
+      section.classList.remove('active');
+    });
+    const target = document.getElementById(id);
+    if(target) target.classList.add('active');
+
+    if(id === 'results') {
+      if(!timeChart) {
+        createChart();
+      } else {
+        timeChart.resize();
+      }
+    }
+  }
+</script>
 </body>
 </html>
