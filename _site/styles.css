@@ -270,3 +270,15 @@ a:hover {
   margin-bottom: 1.2em;     /* controls space between paragraphs */
   color: #333;
 }
+
+canvas.responsive-canvas {
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  margin: 20px auto;
+  display: block;
+}
+
+body {
+  overflow-x: hidden;
+}
