@@ -1,122 +1,38 @@
-/* Basic layout */
+/* =====================
+   BASIC LAYOUT & COLORS
+===================== */
 body {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
   height: 100%;
-  background-color: #f5f5f5; /* homogenous background */
+  background-color: #f5f5f5;
 }
 
 .container {
   background-color: white;
-  max-width: 900px;
-  margin: 2em auto; /* center horizontally with vertical spacing */
+  max-width: 1200px;
+  margin: 2em auto;
   display: flex;
-  min-height: calc(100vh - 4em); /* full height minus margins */
+  flex-direction: row;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  padding: 0 20px;
+  width: 100%;
+  min-height: calc(100vh - 4em);
 }
 
 .sidebar {
-  width: 200px;       /* a bit narrower sidebar */
+  width: 200px;
   padding: 1.5em;
   box-shadow: 2px 0 5px rgba(0,0,0,0.1);
   background-color: white;
 }
 
 .sidebar h1 {
-  font-size: 1.5em;
+  font-size: 38px;
+  font-weight: bold;
+  color: #444;
   margin-top: 0.5em;
-}
-
-.sidebar nav a {
-  display: block;
-  margin: 0.5em 0;
-  text-decoration: none;
-  color: #333;
-}
-
-/* Square profile image */
-.profile-photo {
-  float: left;
-  width: 150px;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-right: 15px;
-  margin-bottom: 10px;
-}
-
-
-/* Main content styling */
-.content {
-  padding: 2em;
-  flex: 1;
-  max-width: 800px; /* about 3x photo width (150px * 3 = 450px) */
-  box-sizing: border-box;
-}
-
-
-.content h2 {
-  margin-top: 0;
-}
-
-/* Footer */
-footer {
-  text-align: center;
-  padding: 1em;
-  font-size: 0.9em;
-  color: #666;
-}
-
-.about-container {
-  display: flex;
-  align-items: flex-start; /* align top of image and text */
-  gap: 2px; /* space between photo and text */
-}
-
-.about-container p {
-  margin: 0; /* remove default top margin */
-}
-
-#about p::after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-.profile-photo {
-  float: left;          /* Float image to the left */
-  width: 180px;         /* fixed width */
-  height: 180px;        /* fixed height */
-  object-fit: cover;
-  border-radius: 8px;
-  margin-right: 15px;   /* space between image and text */
-  margin-bottom: 10px;  /* space below the image */
-}
-
-.page-wrapper {
-  display: flex;
-  justify-content: center;   /* horizontally center */
-  align-items: flex-start;   /* align to top of screen */
-  min-height: 100vh;
-  padding: 2em;
-  box-sizing: border-box;
-}
-.container {
-  display: flex;
-  flex-direction: row;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  max-width: 1200px;
-  width: 100%;
-  background: #fff;
-}
-
-.section {
-  display: none;
-}
-
-.section.active {
-  display: block;
 }
 
 .sidebar nav a {
@@ -124,22 +40,63 @@ footer {
   margin: 10px 0;
   text-decoration: none;
   color: #000;
+  line-height: 1.6;
 }
 
+.sidebar nav a.active {
+  color: #888;
+  font-weight: bold;
+}
+
+/* =====================
+   MAIN CONTENT
+===================== */
+.content {
+  flex: 1;
+  padding: 2em;
+  max-width: 800px;
+  box-sizing: border-box;
+}
+
+.content h2 {
+  color: #444;
+  font-weight: bold;
+  margin-top: 0;
+}
+
+/* Section handling */
+.section {
+  display: none;
+}
+
+.section.active,
 .section:target {
   display: block;
 }
 
-/* Sidebar text spacing */
-.sidebar h1,
-.sidebar p,
-.sidebar nav a {
-  line-height: 1.6; /* increase for more spacing, default is ~1.2 */
+/* =====================
+   ABOUT SECTION
+===================== */
+.about-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
 }
 
-/* About section paragraph spacing */
+.profile-photo {
+  float: left;
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 15px;
+  margin-bottom: 10px;
+}
+
 #about p {
-  line-height: 1.6; /* or try 1.8 if you want more spacing */
+  line-height: 1.8;
+  margin-bottom: 1.2em;
+  color: #333;
 }
 
 .about-links {
@@ -148,7 +105,7 @@ footer {
 }
 
 .about-links a {
-  color: #0073b1; /* LinkedIn blue, adjust as you like */
+  color: #0073b1;
   text-decoration: none;
   font-weight: normal;
   margin: 0 0.3em;
@@ -158,86 +115,10 @@ footer {
   text-decoration: underline;
 }
 
-.content-section {
-  display: none;
-}
-
-.content-section.active {
-  display: block;
-}
-
-button {
-  padding: 6px 12px;
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 4px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-}
-button:hover {
-  background-color: #e0e0e0;
-}
-
-.sidebar h1 { /* name */
-  font-size: 38px;
-  font-weight: bold;
-  color: #444; /* lighter than black */
-}
-
-.content h2 {
-  color: #444; /* same slightly lighter black */
-  font-weight: bold; /* if you want them bold like your name */
-}
-
-.sidebar nav a.active {
-  color: #888;      /* Your highlight color */
-  font-weight: bold;   /* Optional for emphasis */
-}
-
-.note-text {
-  font-size: 14px;
-  margin-bottom: 20px;
-  color: #666;
-}
-
-.note-text {
-  max-width: 800px; /* or any width */
-  line-height: 1.5;
-}
-
-
-.source-text {
-  font-size: 14px;
-  margin-bottom: 20px;
-  color: #666;
-}
-
-.source-text {
-  max-width: 800px; /* or any width */
-  line-height: 1.5;
-}a:link,
-a:visited {
-  color: #0073b1; /* Or any consistent color you prefer */
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-#publications a:link,
-#publications a:visited {
-  color: #0073b1;         /* A clean blue */
-  text-decoration: none;  /* Remove underline */
-  font-weight: 500;       /* Optional: slight emphasis */
-}
-
-#publications a:hover {
-  text-decoration: underline;
-  color: #005580;         /* Darker blue on hover */
-}
-<style>
-  /* Your custom link styles for publications section */
-</style>#publications ul {
+/* =====================
+   PUBLICATIONS & RESEARCH
+===================== */
+#publications ul {
   padding-left: 20px;
 }
 
@@ -246,6 +127,19 @@ a:hover {
   font-size: 16px;
   line-height: 1.6;
 }
+
+#publications a:link,
+#publications a:visited {
+  color: #0073b1;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+#publications a:hover {
+  text-decoration: underline;
+  color: #005580;
+}
+
 #research ul {
   list-style-type: disc;
   padding-left: 1.2em;
@@ -259,21 +153,81 @@ a:hover {
 }
 
 #research h3 {
-  color: #666666; /* medium-light gray, adjust as you prefer */
-  font-weight: 600; /* optional, slightly less bold */
+  color: #666;
+  font-weight: 600;
   margin-top: 1.5em;
   margin-bottom: 0.5em;
 }
 
-#about p {
-  line-height: 1.8;         /* controls space between lines */
-  margin-bottom: 1.2em;     /* controls space between paragraphs */
-  color: #333;
+/* =====================
+   FOOTER & NOTES
+===================== */
+footer {
+  text-align: center;
+  padding: 1em;
+  font-size: 0.9em;
+  color: #666;
 }
 
+.note-text,
+.source-text {
+  font-size: 14px;
+  color: #666;
+  max-width: 800px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+a:link,
+a:visited {
+  color: #0073b1;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* =====================
+   BUTTON STYLING
+===================== */
+button {
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+}
+
+button:hover {
+  background-color: #e0e0e0;
+}
+
+/* =====================
+   CHARTS & PLOTS
+===================== */
+
+/* Chart wrapper aligns canvas center & handles mobile scroll */
+.chart-wrapper {
+  display: flex;
+  justify-content: center;
+  overflow-x: hidden;
+  width: 100%;
+  margin-bottom: 2em;
+}
+
+/* Canvas responsive sizing */
+canvas.responsive-canvas {
+  width: 100%;
+  height: auto;
+  max-width: 800px;
+}
+
+/* Responsive override for mobile */
 @media (max-width: 768px) {
   .container {
-    display: block;
+    flex-direction: column;
   }
 
   .sidebar {
@@ -284,37 +238,12 @@ a:hover {
   .content {
     width: 100%;
   }
-}
 
-/* Keep layout centered */
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-/* Desktop default: centered layout */
-.chart-wrapper {
-  display: flex;
-  justify-content: center;
-  overflow-x: hidden;
-  width: 100%;
-}
-
-/* Canvas adapts to container width on desktop */
-canvas.responsive-canvas {
-  width: 100%;
-  height: auto;
-  max-width: 800px; /* limits plot size on large screens */
-}
-
-/* Mobile override: allow scroll & expand canvas if needed */
-@media (max-width: 768px) {
   .chart-wrapper {
     overflow-x: auto;
   }
 
   canvas.responsive-canvas {
-    min-width: 800px; /* allows full plot to scroll */
+    min-width: 800px;
   }
 }
