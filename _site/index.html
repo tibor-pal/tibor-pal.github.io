@@ -164,7 +164,7 @@
   </footer>
 
   <script>
-    const startYear = 1961, endYear = 2024;
+    const startYear = 1961, endYear = 2025;
 
     const recessions = [
       { start: new Date(1973, 10, 1), end: new Date(1975, 3, 1)  },
@@ -265,6 +265,11 @@
         pointRadius: 0
       }));
 
+
+      const tickYears = [];
+      for (let y = Math.ceil(startYear+1 / 5) * 5; y <= endYear; y += 5) {
+        tickYears.push(new Date(y, 0, 1).getTime()); // timestamps
+      }
       // Create the new chart
       window[canvasId + 'Chart'] = new Chart(ctx, {
         type: 'line',
@@ -273,29 +278,40 @@
           responsive: true,
           scales: {
             x: {
-              type: 'time',
-              time: {
-                unit: 'year',
-                stepSize: 5,
-                displayFormats: { year: 'yyyy' }
-              },
-              title: {
-                display: true,
-                text: 'Year',
-                font: { size: 16 }
-              },
-              min: new Date(startYear, 0, 1),
-              max: new Date(endYear, 11, 31),
-              ticks: {
-                font: { size: 14 },
-                maxRotation: 0,
-                autoSkip: false,
-                callback: function (value) {
-                  const year = new Date(value).getFullYear();
-                  return (year % 5 === 0 && year >= 1965) ? year : '';
-                }
-              }
-            },
+        type: 'time',
+        bounds: 'ticks',
+        distribution: 'linear',
+        time: {
+          unit: 'year',
+          displayFormats: { year: 'yyyy' }
+        },
+        min: new Date(startYear, 0, 1).getTime(),
+        max: new Date(endYear, 11, 31).getTime(),
+        ticks: {
+          source: 'values',           // use only the values in tickYears
+          values: tickYears,          // your 5-year timestamps
+          autoSkip: false,
+          maxRotation: 0,
+          font: { size: 14 },
+          callback: function(value) {
+            const year = new Date(value).getFullYear();
+            // Only label years divisible by 5 (your tickYears)
+            return year % 5 === 0 ? year : '';
+          }
+        },
+        grid: {
+          display: true,
+          drawTicks: true,
+          color: (context) => {
+            const year = new Date(context.tick.value).getFullYear();
+            return year % 5 === 0 ? '#ccc' : 'transparent';
+          },
+          lineWidth: (context) => {
+            const year = new Date(context.tick.value).getFullYear();
+            return year % 5 === 0 ? 1 : 0;
+          }
+        }
+      },
 
             y: {
               beginAtZero: false,
