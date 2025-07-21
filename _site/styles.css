@@ -235,11 +235,15 @@ canvas.responsive-canvas {
 
   .chart-wrapper {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
   }
 
   canvas.responsive-canvas {
     width: 800px;
+    min-width: 800px;
     max-width: none;
+    display: block;
   }
 }
 
