@@ -267,3 +267,31 @@ canvas {
   height: auto;
   display: block;
 }
+
+.plot-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+/* Ensure canvas is always wide enough */
+.plot-wrapper canvas {
+  min-width: 800px;  /* Keep the plot readable */
+  width: 100%;       /* Fill its container */
+  height: auto;
+  display: block;
+}
+
+/* Desktop layout: no scroll, centered */
+@media (min-width: 1024px) {
+  .plot-wrapper {
+    overflow-x: visible;
+    display: flex;
+    justify-content: center;
+  }
+
+  .plot-wrapper canvas {
+    width: 800px;     /* Fixed width on desktop */
+    min-width: unset;
+  }
+}
