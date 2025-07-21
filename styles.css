@@ -1,5 +1,5 @@
 /* =====================
-   BASIC LAYOUT & COLORS
+   BASE & LAYOUT
 ===================== */
 body {
   font-family: sans-serif;
@@ -7,6 +7,7 @@ body {
   padding: 0;
   height: 100%;
   background-color: #f5f5f5;
+  overflow-x: hidden;
 }
 
 .container {
@@ -65,11 +66,10 @@ body {
   margin-top: 0;
 }
 
-/* Section handling */
+/* Section toggle */
 .section {
   display: none;
 }
-
 .section.active,
 .section:target {
   display: block;
@@ -130,13 +130,16 @@ body {
 }
 
 #publications a:link,
-#publications a:visited {
+#publications a:visited,
+#research a:link,
+#research a:visited {
   color: #0073b1;
   text-decoration: none;
   font-weight: 500;
 }
 
-#publications a:hover {
+#publications a:hover,
+#research a:hover {
   text-decoration: underline;
   color: #005580;
 }
@@ -161,7 +164,7 @@ body {
 }
 
 /* =====================
-   FOOTER & NOTES
+   FOOTER & TEXT
 ===================== */
 footer {
   text-align: center;
@@ -179,6 +182,9 @@ footer {
   margin-bottom: 20px;
 }
 
+/* =====================
+   LINKS
+===================== */
 a:link,
 a:visited {
   color: #0073b1;
@@ -190,7 +196,7 @@ a:hover {
 }
 
 /* =====================
-   BUTTON STYLING
+   BUTTONS
 ===================== */
 button {
   padding: 6px 12px;
@@ -205,26 +211,45 @@ button:hover {
   background-color: #e0e0e0;
 }
 
-/* ================
+/* =====================
    CHARTS & PLOTS
-================ */
-
-/* Desktop default (original layout) */
-.chart-wrapper {
+===================== */
+.chart-wrapper,
+.plot-wrapper {
   width: 100%;
   padding: 0;
   box-sizing: border-box;
-  overflow-x: visible;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-canvas.responsive-canvas {
-  width: 750px;
-  height: auto;
+canvas.responsive-canvas,
+.plot-wrapper canvas {
   display: block;
+  width: 100%;
+  height: auto;
   box-sizing: border-box;
+  max-width: 100%;
+  min-width: 750;
 }
 
-/* MOBILE: allow horizontal scroll */
+/* Desktop layout: center and fixed width */
+@media (min-width: 1024px) {
+  .plot-wrapper {
+    overflow-x: visible;
+    display: flex;
+    justify-content: center;
+  }
+
+  .plot-wrapper canvas {
+    width: 800px;
+    min-width: unset;
+  }
+}
+
+/* =====================
+   MOBILE ADJUSTMENTS
+===================== */
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
@@ -234,69 +259,15 @@ canvas.responsive-canvas {
   }
 
   .chart-wrapper {
+    width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    width: 100%;
-    height: 600px; /* if you don't want auto height */
   }
 
   canvas.responsive-canvas {
-    width: 800px;
-    min-width: 800px;
-    max-width: none;
     display: block;
-  }
-}
-
-/* Avoid horizontal scroll on mobile */
-body {
-  overflow-x: hidden;
-}
-
-/* Ensure canvas never overflows on mobile */
-canvas {
-  width: 100%;
-  height: auto;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-.plot-wrapper {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.plot-wrapper canvas {
-  min-width: 800px;     /* ensure it's always wide enough */
-  width: auto;          /* don't shrink */
-  height: auto;
-  display: block;
-}
-
-.plot-wrapper {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  width: 100%;
-}
-
-/* Ensure canvas is always wide enough */
-.plot-wrapper canvas {
-  min-width: 800px;  /* Keep the plot readable */
-  width: 100%;       /* Fill its container */
-  height: auto;
-  display: block;
-}
-
-/* Desktop layout: no scroll, centered */
-@media (min-width: 1024px) {
-  .plot-wrapper {
-    overflow-x: visible;
-    display: flex;
-    justify-content: center;
-  }
-
-  .plot-wrapper canvas {
-    width: 800px;     /* Fixed width on desktop */
-    min-width: unset;
+    width: 800px;
+    max-width: none;
+    height: auto;
   }
 }
