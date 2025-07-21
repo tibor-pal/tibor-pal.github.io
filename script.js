@@ -86,3 +86,16 @@ document.querySelectorAll('.sidebar nav a').forEach(link => {
     link.classList.add('active');
   }
 });
+
+const canvas = document.querySelector('canvas.responsive-canvas');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas(); // Initial call
+
+ctx.fillStyle = "#f5f5f5"; // or any color
+ctx.fillRect(0, 0, canvas.width, canvas.height);
