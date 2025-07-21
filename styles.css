@@ -264,10 +264,14 @@ canvas.responsive-canvas,
     -webkit-overflow-scrolling: touch;
   }
 
-  canvas.responsive-canvas {
-    display: block;
+  .chart-scroll-inner {
     width: 800px;
-    max-width: none;
+    min-width: 800px;
+  }
+
+  canvas.responsive-canvas {
+    width: 100%;
     height: auto;
+    display: block;
   }
 }
