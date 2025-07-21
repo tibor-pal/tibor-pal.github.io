@@ -29,6 +29,7 @@ function createChart() {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false // lets height expand properly
       scales: { /* same as before */ },
       plugins: { /* same as before */ },
       interaction: { /* same as before */ }
@@ -36,6 +37,7 @@ function createChart() {
     plugins: [recessionPlugin]
   });
 }
+
 
 /*function showSection(id) {
   document.querySelectorAll('.section').forEach(section => {
