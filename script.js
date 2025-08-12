@@ -101,3 +101,6 @@ resizeCanvas(); // Initial call
 
 ctx.fillStyle = "#f5f5f5"; // or any color
 ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+seriesKeys = ['rstar', 'estimate'];
+labels = ['r*', 'Estimate'];
