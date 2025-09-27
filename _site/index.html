@@ -27,7 +27,7 @@
         <a href="#" data-section="about" onclick="showSection('about'); return false;">ABOUT</a>
         <a href="#" data-section="research" onclick="showSection('research'); return false;">RESEARCH INTEREST</a>
         <a href="#" data-section="publications" onclick="showSection('publications'); return false;">PUBLICATIONS / WORKING PAPERS</a>
-        <a href="#" data-section="estimates" onclick="showSection('estimates'); return false;">R-STAR PROJECT</a>
+        <a href="#" data-section="r-star" onclick="showSection('r-star'); return false;">R-STAR PROJECT</a>
       </nav>
     </aside>
 
@@ -111,7 +111,7 @@
         </ul>
       </section>
 
-      <section id="estimates" class="section">
+      <section id="r-star" class="section">
         <h2>R-STAR PROJECT</h2>
 
         <!-- Horizontal Buttons -->
@@ -380,7 +380,7 @@
       history.replaceState({ section: id }, '', `?section=${id}`);
 
       // Automatically show R-Star when Estimates section is opened
-      if (id === 'estimates') {
+      if (id === 'r-star') {
         showResultTab('rstar');
       }
     }
