@@ -152,7 +152,7 @@ async function createInflationChart() {
         },
 
         {
-          label: 'Realized Core PCE',
+          label: 'Core PCE',
           data: data.corePCE,
           borderColor: '#0072BD',
           borderWidth: 2,
