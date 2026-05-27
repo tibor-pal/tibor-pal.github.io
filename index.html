@@ -999,9 +999,15 @@
             break;
 
        case 'phillipscurve':
-                setTimeout(() => {
-                  createPhillipsCurveChart();
-            }, 30);
+       createPhillipsCurveChart(
+       ['phillipscurve'],
+       ['Inflation Volatility'],
+       'Inflation Volatility in the United States',
+       'chart-phillipscurve'
+               );
+      //            setTimeout(() => {
+        //            createPhillipsCurveChart();
+        //      }, 30);
             break;
 
         }

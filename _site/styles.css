@@ -267,9 +267,7 @@ canvas.responsive-canvas {
 /* =====================
    MOBILE ADJUSTMENTS
 ===================== */
-
 @media (max-width: 768px) {
-
   .container {
     flex-direction: column;
     width: 100%;
@@ -277,17 +275,20 @@ canvas.responsive-canvas {
     padding: 0;
   }
 
-  .chart-wrapper,
-  .plot-wrapper {
+  .chart-wrapper {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
-  .chart-wrapper canvas,
-  .plot-wrapper canvas,
-  canvas.responsive-canvas {
+  .chart-scroll-inner {
+    width: 800px;
     min-width: 800px;
-    height: 420px !important;
+  }
+
+  canvas.responsive-canvas {
+    width: 100%;
+    height: auto;
+    display: block;
   }
 }
