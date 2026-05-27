@@ -218,49 +218,49 @@ button:hover {
 .chart-wrapper,
 .plot-wrapper {
   width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
   padding: 0;
-  margin: 0;
   box-sizing: border-box;
-  overflow: visible;
   position: relative;
+  overflow: visible;
 }
 
-/* ALL chart canvases */
+/* Important for flexbox + Chart.js */
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Canvas sizing */
 .chart-wrapper canvas,
 .plot-wrapper canvas,
 canvas.responsive-canvas {
   display: block;
   width: 100% !important;
-  max-width: 100%;
+  height: 420px !important;
   box-sizing: border-box;
 }
 
-/* R-Star already works, preserve it */
-#timeChart {
-  height: 420px !important;
-}
-
-/* Force inflation/phillips to match */
+/* Individual charts */
+#timeChart,
 #chart-inflation,
 #chart-phillipscurve {
   width: 100% !important;
   height: 420px !important;
 }
 
-/* Desktop layout */
+/* Desktop */
 @media (min-width: 1024px) {
 
   .chart-wrapper,
   .plot-wrapper {
-    width: 100%;
     overflow: visible;
   }
 
   .chart-wrapper canvas,
   .plot-wrapper canvas {
     width: 100% !important;
-    max-width: 800px;
-    margin: 0 auto;
   }
 }
 
@@ -275,6 +275,12 @@ canvas.responsive-canvas {
     width: 100%;
     margin: 0;
     padding: 0;
+  }
+
+  .content {
+    width: 100%;
+    min-width: 0;
+    padding: 1em;
   }
 
   .chart-wrapper,
