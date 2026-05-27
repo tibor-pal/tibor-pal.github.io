@@ -361,7 +361,7 @@
     async function createChart(seriesKeys, labels, chartTitle, canvasId) {
       const ctx = document.getElementById(canvasId).getContext('2d');
       const data = await fetchAndParseExcel();
-      const yAxisLabel = (canvasId === 'chart-volatility' || canvasId === 'chart-isCurve') ? '' : 'Percent';
+      const yAxisLabel = (canvasId === 'chart-volatility' || canvasId === 'chart-isCurve' || canvasId === 'chart-phillipscurve') ? '' : 'Percent';
       const showLegend = canvasId === 'chart-rstar';
 
       if (!data) {
@@ -845,7 +845,7 @@
             y: {
               title: {
                 display: true,
-                text: 'Percent',
+              //  text: 'Percent',
                 font: { size: 12 }
               },
 
