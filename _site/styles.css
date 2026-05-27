@@ -214,43 +214,62 @@ button:hover {
 /* =====================
    CHARTS & PLOTS
 ===================== */
+
 .chart-wrapper,
 .plot-wrapper {
   width: 100%;
   padding: 0;
+  margin: 0;
   box-sizing: border-box;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: visible;
+  position: relative;
 }
 
-canvas.responsive-canvas,
-.plot-wrapper canvas {
+/* ALL chart canvases */
+.chart-wrapper canvas,
+.plot-wrapper canvas,
+canvas.responsive-canvas {
   display: block;
-  width: 100%;
-  height: auto;
-  box-sizing: border-box;
+  width: 100% !important;
   max-width: 100%;
-  min-width: 750;
+  box-sizing: border-box;
 }
 
-/* Desktop layout: center and fixed width */
+/* R-Star already works, preserve it */
+#timeChart {
+  height: 420px !important;
+}
+
+/* Force inflation/phillips to match */
+#chart-inflation,
+#chart-phillipscurve {
+  width: 100% !important;
+  height: 420px !important;
+}
+
+/* Desktop layout */
 @media (min-width: 1024px) {
+
+  .chart-wrapper,
   .plot-wrapper {
-    overflow-x: visible;
-    display: flex;
-    justify-content: center;
+    width: 100%;
+    overflow: visible;
   }
 
+  .chart-wrapper canvas,
   .plot-wrapper canvas {
-    width: 800px;
-    min-width: unset;
+    width: 100% !important;
+    max-width: 800px;
+    margin: 0 auto;
   }
 }
 
 /* =====================
    MOBILE ADJUSTMENTS
 ===================== */
+
 @media (max-width: 768px) {
+
   .container {
     flex-direction: column;
     width: 100%;
@@ -258,20 +277,17 @@ canvas.responsive-canvas,
     padding: 0;
   }
 
-  .chart-wrapper {
+  .chart-wrapper,
+  .plot-wrapper {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
-  .chart-scroll-inner {
-    width: 800px;
-    min-width: 800px;
-  }
-
+  .chart-wrapper canvas,
+  .plot-wrapper canvas,
   canvas.responsive-canvas {
-    width: 100%;
-    height: auto;
-    display: block;
+    min-width: 800px;
+    height: 420px !important;
   }
 }

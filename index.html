@@ -24,15 +24,15 @@
     <aside class="sidebar">
       <h1>TIBOR PÁL</h1>
       <nav>
-        <a href="#" data-section="about" onclick="showSection('about'); return false;">ABOUT</a>
-        <a href="#" data-section="research" onclick="showSection('research'); return false;">RESEARCH INTEREST</a>
+        <a href="#" data-section="about"        onclick="showSection('about');        return false;">ABOUT</a>
+        <a href="#" data-section="research"     onclick="showSection('research');     return false;">RESEARCH INTEREST</a>
         <a href="#" data-section="publications" onclick="showSection('publications'); return false;">PUBLICATIONS / WORKING PAPERS</a>
-        <a href="#" data-section="r-star" onclick="showSection('r-star'); return false;">R-STAR PROJECT</a>
+        <a href="#" data-section="r-star"       onclick="showSection('r-star');       return false;">R-STAR PROJECT</a>
+        <a href="#" data-section="phillips"     onclick="showSection('phillips');     return false;">INFLATION DYNAMICS AND PHILLIPS CURVE</a>
       </nav>
     </aside>
 
     <main class="content">
-
 
       <section id="about" class="section active">
         <h2>ABOUT</h2>
@@ -133,10 +133,10 @@
 
         <!-- Horizontal Buttons -->
         <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-          <button onclick="showResultTab('rstar')" >R-Star</button>
-          <button onclick="showResultTab('outputGap')" >Output Gap</button>
-          <button onclick="showResultTab('isCurve')">IS Curve</button>
-          <button onclick="showResultTab('volatility')">Inflation Volatility</button>
+          <button onclick="showResultTab('rstar')"      >R-Star</button>
+          <button onclick="showResultTab('outputGap')"  >Output Gap</button>
+          <button onclick="showResultTab('isCurve')"    >IS Curve</button>
+          <button onclick="showResultTab('volatility')" >Inflation Volatility</button>
         </div>
 
         <!-- Content Panels -->
@@ -172,7 +172,6 @@
           </div>
         </div>
 
-
         <p class="note-text">
           Note: Shaded vertical areas indicate U.S. recessions as dated by the National Bureau of Economic Research (NBER). The Q1 2026 estimates will be available by mid-Jun.
         </p>
@@ -184,6 +183,45 @@
             <em>Pál, Tibor and Storti, Giuseppe: Estimating the R-Star in the US: A Score-Driven State-Space Model with Time-Varying Volatility Persistence (2025, Working Paper)</em>
           </a>.
         </p>
+
+      </section>
+
+      <section id="phillips" class="section">
+    <!--    <div class="chart-container">>-->
+          <h2>INFLATION DYNAMICS AND THE PHILLIPS CURVE</h2>
+
+          <!-- Horizontal Buttons -->
+          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                      <button onclick="showResultTab('inflation')" >Inflation Dynamics</button>
+                      <button onclick="showResultTab('phillipscurve')" >Phillips Curve</button>
+                </div>
+
+          <!-- Content Panels -->
+          <div class="result-tab" id="inflation" style="display:none;">
+            <div class="chart-wrapper inflation-wrapper">
+              <canvas id="chart-inflation"></canvas>
+            </div>
+          </div>
+
+          <div class="result-tab" id="phillipscurve" style="display:none;">
+            <div class="chart-wrapper inflation-wrapper">
+              <canvas id="chart-phillipscurve"></canvas>
+            </div>
+          </div>
+
+          <p class="note-text">
+            Note: Shaded vertical areas indicate U.S. recessions as dated by the National Bureau of Economic Research (NBER). The Q1 2026 estimates will be available by mid-Jun.
+          </p>
+
+          <p class="source-text">
+            Source: Calculations use the methodology (sDMQ-TV(L) specification) outlined in
+              <a href="Pal_2026_Inflation_Dynamics_Beyond_the_Mean_wp.pdf" target="_blank">
+                <em>Pál, Tibor:</em> Inflation Dynamics Beyond the Mean: A Time-Varying Multiple Quantile Phillips Curve with Quantile-Heterogeneous Slopes
+
+              <em>(2026, Working Paper).</em>
+
+                        </a><br />
+          </p>
 
       </section>
 
@@ -225,42 +263,89 @@
     let timeChart = null;
 
     async function fetchAndParseExcel() {
-      try {
-        const response = await fetch('estimates_PS2025.xlsx');
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-        const arrayBuffer = await response.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const json = XLSX.utils.sheet_to_json(worksheet);
+    try {
 
-        function excelDateToJSDate(serial) {
-          const utc_days = serial - 25569;
-          const utc_value = utc_days * 86400;
-          return new Date(utc_value * 1000);
-        }
+      const response = await fetch('estimates_PS2025.xlsx');
 
-        const parseSeries = (columnName) => json.map(row => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+
+      const workbook = XLSX.read(arrayBuffer, {
+        type: 'array'
+      });
+
+      const sheetName = workbook.SheetNames[0];
+
+      const worksheet = workbook.Sheets[sheetName];
+
+      const json = XLSX.utils.sheet_to_json(worksheet);
+
+      function excelDateToJSDate(serial) {
+
+        const utc_days = serial - 25569;
+
+        const utc_value = utc_days * 86400;
+
+        return new Date(utc_value * 1000);
+      }
+
+      const parseSeries = (columnName) =>
+
+        json.map(row => {
+
           let date = row.Date;
-          if (typeof date === 'number') date = excelDateToJSDate(date);
-          else date = new Date(date);
-          return { x: date, y: row[columnName] };
+
+          if (typeof date === 'number') {
+            date = excelDateToJSDate(date);
+          } else {
+            date = new Date(date);
+          }
+
+          return {
+            x: date,
+            y: row[columnName]
+          };
         });
 
-        return {
-          rStar: parseSeries('rStar'),
-          rStar_sm: parseSeries('rStar_sm'),
-          yGap: parseSeries('yGap'),
-          b3: parseSeries('b3'),
-          a3: parseSeries('a3'),
-          infVol: parseSeries('infVol')
-        };
-      } catch (error) {
-        console.error('Error loading Excel file:', error);
-        return null;
-      }
+      return {
+
+        // R-Star project
+        rStar: parseSeries('rStar'),
+        rStar_sm: parseSeries('rStar_sm'),
+        yGap: parseSeries('yGap'),
+        b3: parseSeries('b3'),
+        a3: parseSeries('a3'),
+        infVol: parseSeries('infVol'),
+
+        // Inflation dynamics
+        q95: parseSeries('q95'),
+        q75: parseSeries('q75'),
+        q50: parseSeries('q50'),
+        q25: parseSeries('q25'),
+        q05: parseSeries('q05'),
+
+        // Phillips curve slopes
+        k95: parseSeries('k95'),
+        k75: parseSeries('k75'),
+        k50: parseSeries('k50'),
+        k25: parseSeries('k25'),
+        k05: parseSeries('k05'),
+
+        // realized inflation
+        corePCE: parseSeries('corePCE')
+      };
+
+    } catch (error) {
+
+      console.error('Error loading Excel file:', error);
+
+      return null;
     }
+  }
 
     async function createChart(seriesKeys, labels, chartTitle, canvasId) {
       const ctx = document.getElementById(canvasId).getContext('2d');
@@ -388,6 +473,454 @@
       });
     }
 
+    async function createInflationChart() {
+      const canvas = document.getElementById('chart-inflation');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      const data = await fetchAndParseExcel();
+
+      if (!data) return;
+
+      if (window.inflationChart) {
+        window.inflationChart.destroy();
+      }
+
+      window.inflationChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          datasets: [
+            {
+              label: 'IQR (𝜏 = 0.75)',
+              data: data.q75,
+              borderColor: 'transparent',
+              backgroundColor: 'rgba(120,180,180,0.25)',
+              pointRadius: 0,
+              fill: '+1'
+            },
+            {
+              label: 'IQR (𝜏 = 0.25)',
+              data: data.q25,
+              borderColor: 'transparent',
+              backgroundColor: 'rgba(120,180,180,0.25)',
+              pointRadius: 0,
+              fill: false
+            },
+            {
+              label: '𝜏 = 0.95',
+              data: data.q95,
+              borderColor: '#3b2418',
+              borderWidth: 2,
+              pointRadius: 0
+            },
+            {
+              label: '𝜏 = 0.50',
+              data: data.q50,
+              borderColor: '#ff4d4d',
+              borderWidth: 1.5,
+              pointRadius: 0
+            },
+            {
+              label: '𝜏 = 0.05',
+              data: data.q05,
+              borderColor: '#e6a400',
+              borderWidth: 2,
+              pointRadius: 0
+            },
+            {
+              label: 'Realized Core PCE',
+              data: data.corePCE,
+              borderColor: '#0072BD',
+              borderWidth: 2,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+
+          scales: {
+            x: {
+              type: 'time',
+              bounds: 'ticks',
+              distribution: 'linear',
+
+              time: {
+                unit: 'year',
+                displayFormats: { year: 'yyyy' }
+              },
+
+              min: new Date(startYear, 0, 1).getTime(),
+              max: new Date(endYear, 11, 31).getTime(),
+
+              ticks: {
+                source: 'values',
+                values: (() => {
+                  const years = [];
+                  for (
+                    let y = Math.ceil((startYear + 1) / 5) * 5;
+                    y <= endYear;
+                    y += 5
+                  ) {
+                    years.push(new Date(y, 0, 1).getTime());
+                  }
+                  return years;
+                })(),
+
+                autoSkip: false,
+                maxRotation: 0,
+                font: { size: 14 },
+
+                callback: function(value) {
+                  const year = new Date(value).getFullYear();
+                  return year % 5 === 0 ? year : '';
+                }
+              },
+
+              grid: {
+                display: true,
+                drawTicks: true,
+
+                color: (context) => {
+                  const year = new Date(context.tick.value).getFullYear();
+                  return year % 5 === 0 ? '#ccc' : 'transparent';
+                },
+
+                lineWidth: (context) => {
+                  const year = new Date(context.tick.value).getFullYear();
+                  return year % 5 === 0 ? 1 : 0;
+                }
+              }
+            },
+
+            y: {
+              title: {
+                display: true,
+                text: 'Percent',
+                font: { size: 12 }
+              },
+
+              ticks: {
+                font: { size: 14 }
+              },
+
+              grid: {
+                color: (context) =>
+                  context.tick.value === 0 ? '#ccc' : '#eee',
+
+                lineWidth: (context) =>
+                  context.tick.value === 0 ? 2 : 1
+              }
+            }
+          },
+
+          plugins: {
+            title: {
+              display: true,
+              text: 'Filtered Conditional Inflation Quantiles in the United States',
+              font: {
+                size: 18,
+                weight: 'bold'
+              },
+              padding: {
+                top: 10,
+                bottom: 20
+              }
+            },
+
+            legend: {
+              display: true,
+
+              labels: {
+                font: { size: 14 },
+
+                generateLabels: function(chart) {
+
+                  const original =
+                    Chart.defaults.plugins.legend.labels.generateLabels(chart);
+
+                  return original
+                    .filter(item => item.text !== 'IQR (𝜏 = 0.25)')
+                    .map(item => {
+
+                      if (item.text === 'IQR (𝜏 = 0.75)') {
+
+                        item.text = 'IQR (0.75, 0.25)';
+
+                        item.fillStyle = 'rgba(120,180,180,0.25)';
+                        item.strokeStyle = 'rgba(120,180,180,0.25)';
+                        item.lineWidth = 0;
+                      }
+
+                      return item;
+                    });
+                }
+              }
+            },
+
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+
+              callbacks: {
+                title: function(items) {
+                  const date = new Date(items[0].parsed.x);
+                  const quarter = Math.floor(date.getMonth() / 3) + 1;
+                  return `${date.getFullYear()}: Q${quarter}`;
+                }
+              }
+            }
+          },
+
+          interaction: {
+            mode: 'nearest',
+            intersect: false
+          }
+        },
+        plugins: [recessionPlugin]
+      });
+    }
+
+
+    async function createPhillipsCurveChart() {
+
+      const ctx = document
+        .getElementById('chart-phillipscurve')
+        .getContext('2d');
+
+      const data = await fetchAndParseExcel();
+
+      if (!data) return;
+
+      if (window.phillipsChart) {
+        window.phillipsChart.destroy();
+      }
+
+      window.phillipsChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          datasets: [
+            {
+              label: '𝜏 = 0.95',
+              data: data.k95,
+              borderColor: '#3b2418',
+              borderWidth: 2,
+              pointRadius: 0,
+              tension: 0.1
+            },
+
+            {
+              label: '𝜏 = 0.75',
+              data: data.k75,
+              borderColor: '#d95f02',
+              borderWidth: 2,
+              pointRadius: 0,
+              tension: 0.1
+            },
+
+            {
+              label: '𝜏 = 0.50',
+              data: data.k50,
+              borderColor: '#0072BD',
+              borderDash: [6,4],
+              borderWidth: 2,
+              pointRadius: 0,
+              tension: 0.1
+            },
+
+            {
+              label: '𝜏 = 0.25',
+              data: data.k25,
+              borderColor: '#66a61e',
+              borderWidth: 2,
+              pointRadius: 0,
+              tension: 0.1
+            },
+
+            {
+              label: '𝜏 = 0.05',
+              data: data.k05,
+              borderColor: '#e6a400',
+              borderWidth: 2,
+              pointRadius: 0,
+              tension: 0.1
+            }
+          ]
+        },
+
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+
+          scales: {
+            x: {
+              type: 'time',
+              bounds: 'ticks',
+              distribution: 'linear',
+
+              time: {
+                unit: 'year',
+                displayFormats: {
+                  year: 'yyyy'
+                }
+              },
+
+              min: new Date(startYear, 0, 1).getTime(),
+              max: new Date(endYear, 11, 31).getTime(),
+
+              ticks: {
+                source: 'values',
+
+                values: (() => {
+
+                  const years = [];
+
+                  for (
+                    let y = Math.ceil((startYear + 1) / 5) * 5;
+                    y <= endYear;
+                    y += 5
+                  ) {
+                    years.push(
+                      new Date(y, 0, 1).getTime()
+                    );
+                  }
+
+                  return years;
+
+                })(),
+
+                autoSkip: false,
+                maxRotation: 0,
+
+                font: {
+                  size: 14
+                },
+
+                callback: function(value) {
+
+                  const year =
+                    new Date(value).getFullYear();
+
+                  return year % 5 === 0 ? year : '';
+                }
+              },
+
+              grid: {
+
+                display: true,
+                drawTicks: true,
+
+                color: (context) => {
+
+                  const year =
+                    new Date(context.tick.value).getFullYear();
+
+                  return year % 5 === 0
+                    ? '#ccc'
+                    : 'transparent';
+                },
+
+                lineWidth: (context) => {
+
+                  const year =
+                    new Date(context.tick.value).getFullYear();
+
+                  return year % 5 === 0 ? 1 : 0;
+                }
+              }
+            },
+
+            y: {
+              title: {
+                display: true,
+                text: 'Percent',
+                font: { size: 12 }
+              },
+
+              ticks: {
+                font: { size: 14 }
+              },
+
+              grid: {
+                color: (context) =>
+                  context.tick.value === 0 ? '#ccc' : '#eee',
+
+                lineWidth: (context) =>
+                  context.tick.value === 0 ? 2 : 1
+              }
+            }
+          },
+
+          plugins: {
+
+            legend: {
+              position: 'top',
+
+              labels: {
+                font: {
+                  size: 14
+                }
+              }
+            },
+
+            title: {
+              display: true,
+              text: 'Quantlie-Specific Phillips Curve Slopes in the United States',
+
+              font: {
+                size: 18,
+                weight: 'bold'
+              },
+
+              padding: {
+                top: 10,
+                bottom: 20
+              }
+            },
+
+            tooltip: {
+                mode: 'index',
+                intersect: false,
+
+                callbacks: {
+
+                  title: function(items) {
+
+                    const date = new Date(items[0].parsed.x);
+
+                    const quarter =
+                      Math.floor(date.getMonth() / 3) + 1;
+
+                    return `${date.getFullYear()}: Q${quarter}`;
+                  },
+
+                  label: function(context) {
+
+                    let label = context.dataset.label || '';
+
+                    if (label) label += ': ';
+
+                    if (context.parsed.y !== null) {
+                      label += context.parsed.y.toFixed(3);
+                    }
+
+                    return label;
+                  }
+                }
+              }
+          },
+
+
+          interaction: {
+            mode: 'index',
+            intersect: false
+          }
+        },
+
+        plugins: [recessionPlugin]
+      });
+    }
 
     function showSection(id) {
       document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
@@ -399,6 +932,9 @@
       // Automatically show R-Star when Estimates section is opened
       if (id === 'r-star') {
         showResultTab('rstar');
+      }
+      if (id === 'phillips') {
+        showResultTab('inflation');
       }
     }
 
@@ -448,8 +984,22 @@
           'chart-volatility'
         );
         break;
-    }
-  }
+
+
+        case 'inflation':
+            setTimeout(() => {
+              createInflationChart();
+            }, 30);
+            break;
+
+       case 'phillipscurve':
+                setTimeout(() => {
+                  createPhillipsCurveChart();
+            }, 30);
+            break;
+
+        }
+      }
 
     window.addEventListener('DOMContentLoaded', () => {
       const section = new URLSearchParams(location.search).get('section') || 'about';
@@ -494,7 +1044,7 @@
 </script>
 
 <div class="plot-wrapper">
-  <canvas id="myChart"></canvas>
+  <canvas id="chart-inflation"></canvas>
 </div>
 
 </body>
