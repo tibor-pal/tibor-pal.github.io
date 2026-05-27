@@ -987,9 +987,15 @@
 
 
         case 'inflation':
-            setTimeout(() => {
-              createInflationChart();
-            }, 30);
+        createInflationChart(
+          ['inflation'],
+          ['Inflation Volatility'],
+          'Inflation Volatility in the United States',
+          'chart-inflation'
+        );
+      //      setTimeout(() => {
+      //        createInflationChart();
+      //      }, 30);
             break;
 
        case 'phillipscurve':
