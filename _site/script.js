@@ -492,15 +492,20 @@ function scrollChartRight(selector) {
 
   if (!wrapper) return;
 
-  wrapper.scrollLeft =
-    wrapper.scrollWidth;
-
-  requestAnimationFrame(() => {
+  const doScroll = () => {
 
     wrapper.scrollLeft =
       wrapper.scrollWidth;
 
-  });
+  };
+
+  doScroll();
+
+  requestAnimationFrame(doScroll);
+
+  setTimeout(doScroll, 100);
+
+  setTimeout(doScroll, 300);
 }
 
 /* =========================
