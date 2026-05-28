@@ -221,6 +221,19 @@ async function createInflationChart() {
     ,staticTooltipPlugin
         ]
   });
+
+  // mobile: scroll to newest quarter
+  setTimeout(() => {
+
+    if (window.innerWidth <= 768) {
+
+      scrollChartRight(
+        '#phillipscurve .chart-wrapper'
+      );
+
+    }
+
+  }, 250);
 }
 
 async function createPhillipsCurveChart() {
@@ -391,6 +404,19 @@ async function createPhillipsCurveChart() {
     ,staticTooltipPlugin
     ]
   });
+
+  // mobile: scroll to newest quarter
+  setTimeout(() => {
+
+    if (window.innerWidth <= 768) {
+
+      scrollChartRight(
+        '#phillipscurve .chart-wrapper'
+      );
+
+    }
+
+  }, 250);
 }
 
 
@@ -455,6 +481,27 @@ function resizeAllCharts() {
 
 window.addEventListener('resize', resizeAllCharts);
 
+/* =========================
+   SCROLLIN  HANDLING
+========================= */
+
+function scrollChartRight(selector) {
+
+  const wrapper =
+    document.querySelector(selector);
+
+  if (!wrapper) return;
+
+  wrapper.scrollLeft =
+    wrapper.scrollWidth;
+
+  requestAnimationFrame(() => {
+
+    wrapper.scrollLeft =
+      wrapper.scrollWidth;
+
+  });
+}
 
 /* =========================
    OPTIONAL GLOBALS

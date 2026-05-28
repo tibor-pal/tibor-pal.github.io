@@ -759,6 +759,19 @@
         ,staticTooltipPlugin
         ]
       });
+
+      // mobile: scroll to newest quarter
+      setTimeout(() => {
+
+        if (window.innerWidth <= 768) {
+
+          scrollChartRight(
+            '#phillipscurve .chart-wrapper'
+          );
+
+        }
+
+      }, 250);
     }
 
 
@@ -1008,6 +1021,20 @@
       ,staticTooltipPlugin
         ]
       });
+
+      // mobile: scroll to newest quarter
+      setTimeout(() => {
+
+        if (window.innerWidth <= 768) {
+
+          scrollChartRight(
+            '#phillipscurve .chart-wrapper'
+          );
+
+        }
+
+      }, 250);
+
     }
 
     function showSection(id) {
