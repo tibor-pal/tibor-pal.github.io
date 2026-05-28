@@ -79,7 +79,10 @@ function createChart() {
       }
     },
 
-    plugins: [recessionPlugin]
+    plugins: [
+      recessionPlugin,
+      staticTooltipPlugin
+    ]
   });
 }
 
@@ -104,7 +107,7 @@ async function createInflationChart() {
       datasets: [
         // upper IQR
         {
-          label: 'IQR (𝜏 = 0.75)',
+          label: '𝜏 = 0.75',
           data: data.q75,
           borderColor: 'transparent',
           backgroundColor: 'rgba(120,180,180,0.25)',
@@ -116,7 +119,7 @@ async function createInflationChart() {
 
         // lower IQR
         {
-          label: 'IQR (𝜏 = 0.25)',
+          label: '𝜏 = 0.25',
           data: data.q25,
           borderColor: 'transparent',
           backgroundColor: 'rgba(120,180,180,0.25)',
@@ -190,6 +193,13 @@ async function createInflationChart() {
             tooltip: {
               mode: 'index',
               intersect: false,
+              backgroundColor: 'rgba(0,0,0,0.65)',
+        borderColor: 'rgba(255,255,255,0.12)',
+        borderWidth: 1,
+        cornerRadius: 8,
+
+        titleColor: '#fff',
+        bodyColor: '#fff',
               callbacks: {
                 label: function(context) {
                   let label = context.dataset.label || '';
@@ -206,7 +216,10 @@ async function createInflationChart() {
           }
         },
 
-    plugins: [recessionPlugin]
+        plugins: [
+          recessionPlugin,
+          staticTooltipPlugin
+        ]
   });
 }
 
@@ -333,7 +346,13 @@ async function createPhillipsCurveChart() {
         tooltip: {
           mode: 'index',
           intersect: false,
+          backgroundColor: 'rgba(0,0,0,0.65)',
+          borderColor: 'rgba(255,255,255,0.12)',
+          borderWidth: 1,
+          cornerRadius: 8,
 
+          titleColor: '#fff',
+          bodyColor: '#fff',
           callbacks: {
 
             title: function(items) {
@@ -367,7 +386,10 @@ async function createPhillipsCurveChart() {
       }
     },
 
-    plugins: [recessionPlugin]
+    plugins: [
+      recessionPlugin,
+      staticTooltipPlugin
+    ]
   });
 }
 

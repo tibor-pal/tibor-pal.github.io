@@ -207,7 +207,12 @@
                 </canvas>
               </div>
             </div>
+            <p class="note-text">
+               Note: IQR denotes the interquartile range. Core PCE refers to the annualized inflation rate of the Core Personal Consumption Expenditures price index. Shaded vertical areas indicate U.S. recessions as dated by the National Bureau of Economic Research (NBER). The Q1 2026 estimates will be available by mid-Jun.
+            </p>
           </div>
+
+
 
           <div class="result-tab" id="phillipscurve" style="display:none;">
             <div class="chart-wrapper inflation-wrapper">
@@ -218,11 +223,12 @@
                 </canvas>
               </div>
             </div>
+            <p class="note-text">
+               Note: Shaded vertical areas indicate U.S. recessions as dated by the National Bureau of Economic Research (NBER). The Q1 2026 estimates will be available by mid-Jun.
+            </p>
           </div>
 
-          <p class="note-text">
-            Note: Shaded vertical areas indicate U.S. recessions as dated by the National Bureau of Economic Research (NBER). The Q1 2026 estimates will be available by mid-Jun.
-          </p>
+
 
           <p class="source-text">
             Source: Calculations use the methodology (sDMQ-TV(L) specification) outlined in
@@ -270,6 +276,42 @@
         ctx.restore();
       }
     };
+
+    const staticTooltipPlugin = {
+  id: 'staticTooltipPlugin',
+
+  afterDraw(chart, args, options) {
+
+    // run only once
+    if (chart._tooltipInitialized) return;
+
+    const lastIndex =
+      chart.data.datasets[0].data.length - 1;
+
+    if (lastIndex < 0) return;
+
+    const activeElements =
+      chart.data.datasets.map((dataset, datasetIndex) => ({
+        datasetIndex,
+        index: lastIndex
+      }));
+
+    chart.tooltip.setActiveElements(
+      activeElements,
+      {
+        x: chart.getDatasetMeta(0).data[lastIndex].x,
+        y: chart.getDatasetMeta(0).data[lastIndex].y
+      }
+    );
+
+    chart.setActiveElements(activeElements);
+
+    chart._tooltipInitialized = true;
+
+    chart.draw();
+  }
+};
+
 
     let timeChart = null;
 
@@ -469,6 +511,13 @@
             tooltip: {
               mode: 'index',
               intersect: false,
+              backgroundColor: 'rgba(0,0,0,0.65)',
+        borderColor: 'rgba(255,255,255,0.12)',
+        borderWidth: 1,
+        cornerRadius: 8,
+
+        titleColor: '#fff',
+        bodyColor: '#fff',
               callbacks: {
                 title: function (items) {
                   const date = new Date(items[0].parsed.x);
@@ -480,7 +529,8 @@
           },
           interaction: { mode: 'nearest', intersect: false }
         },
-        plugins: [recessionPlugin]
+        plugins: [recessionPlugin,
+        staticTooltipPlugin]
       });
     }
 
@@ -502,7 +552,7 @@
         data: {
           datasets: [
             {
-              label: 'IQR (𝜏 = 0.75)',
+              label: '𝜏 = 0.75',
               data: data.q75,
               borderColor: 'transparent',
               backgroundColor: 'rgba(120,180,180,0.25)',
@@ -510,7 +560,7 @@
               fill: '+1'
             },
             {
-              label: 'IQR (𝜏 = 0.25)',
+              label: '𝜏 = 0.25',
               data: data.q25,
               borderColor: 'transparent',
               backgroundColor: 'rgba(120,180,180,0.25)',
@@ -652,10 +702,10 @@
                     Chart.defaults.plugins.legend.labels.generateLabels(chart);
 
                   return original
-                    .filter(item => item.text !== 'IQR (𝜏 = 0.25)')
+                    .filter(item => item.text !== '𝜏 = 0.25')
                     .map(item => {
 
-                      if (item.text === 'IQR (𝜏 = 0.75)') {
+                      if (item.text === '𝜏 = 0.75') {
 
                         item.text = 'IQR (0.75, 0.25)';
 
@@ -673,7 +723,13 @@
             tooltip: {
               mode: 'index',
               intersect: false,
+              backgroundColor: 'rgba(0,0,0,0.65)',
+        borderColor: 'rgba(255,255,255,0.12)',
+        borderWidth: 1,
+        cornerRadius: 8,
 
+        titleColor: '#fff',
+        bodyColor: '#fff',
               callbacks: {
                 title: function(items) {
                   const date = new Date(items[0].parsed.x);
@@ -689,7 +745,10 @@
             intersect: false
           }
         },
-        plugins: [recessionPlugin]
+        plugins: [
+          recessionPlugin,
+          staticTooltipPlugin
+        ]
       });
     }
 
@@ -893,7 +952,13 @@
             tooltip: {
                 mode: 'index',
                 intersect: false,
+                backgroundColor: 'rgba(0,0,0,0.65)',
+          borderColor: 'rgba(255,255,255,0.12)',
+          borderWidth: 1,
+          cornerRadius: 8,
 
+          titleColor: '#fff',
+          bodyColor: '#fff',
                 callbacks: {
 
                   title: function(items) {
@@ -929,7 +994,10 @@
           }
         },
 
-        plugins: [recessionPlugin]
+        plugins: [
+          recessionPlugin,
+          staticTooltipPlugin
+        ]
       });
     }
 
