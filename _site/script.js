@@ -397,23 +397,6 @@ async function createPhillipsCurveChart() {
       staticTooltipPlugin
     ]
   });
-
-  setTimeout(() => {
-
-    const wrapper =
-      document.querySelector(
-        '#phillipscurve .chart-wrapper'
-      );
-
-    if (wrapper && window.innerWidth <= 768) {
-
-      wrapper.scrollLeft =
-        wrapper.scrollWidth;
-
-    }
-
-  }, 200);
-
 }
 
 
