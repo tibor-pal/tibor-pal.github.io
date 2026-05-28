@@ -278,39 +278,47 @@
     };
 
     const staticTooltipPlugin = {
-  id: 'staticTooltipPlugin',
 
-  afterDraw(chart, args, options) {
+      id: 'staticTooltipPlugin',
 
-    // run only once
-    if (chart._tooltipInitialized) return;
+      afterRender(chart) {
 
-    const lastIndex =
-      chart.data.datasets[0].data.length - 1;
+        // run only once
+        if (chart._tooltipInitialized) return;
 
-    if (lastIndex < 0) return;
+        chart._tooltipInitialized = true;
 
-    const activeElements =
-      chart.data.datasets.map((dataset, datasetIndex) => ({
-        datasetIndex,
-        index: lastIndex
-      }));
+        setTimeout(() => {
 
-    chart.tooltip.setActiveElements(
-      activeElements,
-      {
-        x: chart.getDatasetMeta(0).data[lastIndex].x,
-        y: chart.getDatasetMeta(0).data[lastIndex].y
+          const lastIndex =
+            chart.data.datasets[0].data.length - 1;
+
+          if (lastIndex < 0) return;
+
+          const activeElements =
+            chart.data.datasets.map((dataset, datasetIndex) => ({
+              datasetIndex,
+              index: lastIndex
+            }));
+
+          const point =
+            chart.getDatasetMeta(0).data[lastIndex];
+
+          chart.setActiveElements(activeElements);
+
+          chart.tooltip.setActiveElements(
+            activeElements,
+            {
+              x: point.x,
+              y: point.y
+            }
+          );
+
+          chart.update();
+
+        }, 400); // important for mobile rendering
       }
-    );
-
-    chart.setActiveElements(activeElements);
-
-    chart._tooltipInitialized = true;
-
-    chart.draw();
-  }
-};
+    };
 
 
     let timeChart = null;
@@ -530,7 +538,7 @@
           interaction: { mode: 'nearest', intersect: false }
         },
         plugins: [recessionPlugin
-      //    ,staticTooltipPlugin
+      ,staticTooltipPlugin
         ]
       });
     }
@@ -748,7 +756,7 @@
         },
         plugins: [
           recessionPlugin
-        //  ,staticTooltipPlugin
+        ,staticTooltipPlugin
         ]
       });
     }
@@ -997,7 +1005,7 @@
 
         plugins: [
           recessionPlugin
-      //    ,staticTooltipPlugin
+      ,staticTooltipPlugin
         ]
       });
     }

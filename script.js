@@ -81,7 +81,7 @@ function createChart() {
 
     plugins: [
       recessionPlugin
-    //  ,staticTooltipPlugin
+    ,staticTooltipPlugin
     ]
   });
 }
@@ -218,7 +218,7 @@ async function createInflationChart() {
 
         plugins: [
           recessionPlugin
-    //      ,staticTooltipPlugin
+    ,staticTooltipPlugin
         ]
   });
 }
@@ -388,7 +388,7 @@ async function createPhillipsCurveChart() {
 
     plugins: [
       recessionPlugin
-    //  ,staticTooltipPlugin
+    ,staticTooltipPlugin
     ]
   });
 }
