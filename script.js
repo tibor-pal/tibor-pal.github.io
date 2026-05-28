@@ -232,7 +232,7 @@ async function createPhillipsCurveChart() {
           label: '𝜏 = 0.95',
           data: data.k95,
           borderColor: '#3b2418',
-          borderWidth: 2,
+          borderWidth: 2.5,
           pointRadius: 0,
           tension: 0.1
         },
@@ -241,7 +241,7 @@ async function createPhillipsCurveChart() {
           label: '𝜏 = 0.75',
           data: data.k75,
           borderColor: '#d95f02',
-          borderWidth: 2,
+          borderWidth: 2.5,
           pointRadius: 0,
           tension: 0.1
         },
@@ -251,7 +251,7 @@ async function createPhillipsCurveChart() {
           data: data.k50,
           borderColor: '#0072BD',
           borderDash: [6,4],
-          borderWidth: 2,
+          borderWidth: 2.5,
           pointRadius: 0,
           tension: 0.1
         },
@@ -260,7 +260,7 @@ async function createPhillipsCurveChart() {
           label: '𝜏 = 0.25',
           data: data.k25,
           borderColor: '#66a61e',
-          borderWidth: 2,
+          borderWidth: 2.5,
           pointRadius: 0,
           tension: 0.1
         },
@@ -269,7 +269,7 @@ async function createPhillipsCurveChart() {
           label: '𝜏 = 0.05',
           data: data.k05,
           borderColor: '#e6a400',
-          borderWidth: 2,
+          borderWidth: 2.5,
           pointRadius: 0,
           tension: 0.1
         }
