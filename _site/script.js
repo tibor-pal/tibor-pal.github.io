@@ -292,6 +292,12 @@ async function createPhillipsCurveChart() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: {
+        padding: {
+          right: 40
+        }
+      },
+
 
       scales: {
 
