@@ -1,11 +1,9 @@
 let timeChart = null;
 
 /* =========================
-   MAIN CHART
+   GLOBAL CHART DEFAULTS
 ========================= */
-
-// Force 2 decimal places globally across all Chart.js tooltips
-Chart.components.get('plugin.tooltip').prototype.defaults.callbacks.label = function(context) {
+Chart.defaults.plugins.tooltip.callbacks.label = function(context) {
   let label = context.dataset.label || '';
   if (label) label += ': ';
   if (context.parsed.y !== null) {
@@ -14,8 +12,10 @@ Chart.components.get('plugin.tooltip').prototype.defaults.callbacks.label = func
   return label;
 };
 
+/* =========================
+   MAIN CHART
+========================= */
 function createChart() {
-
   const canvas = document.getElementById('timeChart');
   if (!canvas) return;
 
@@ -23,10 +23,8 @@ function createChart() {
 
   timeChart = new Chart(ctx, {
     type: 'line',
-
     data: {
       labels: dates,
-
       datasets: [
         {
           label: 'r',
@@ -37,7 +35,6 @@ function createChart() {
           tension: 0.1,
           pointRadius: 0,
         },
-
         {
           label: 'r_sm',
           data: r_sm,
@@ -49,52 +46,36 @@ function createChart() {
         }
       ]
     },
-
     options: {
       responsive: true,
       maintainAspectRatio: false,
-
       scales: {
         x: {
-          ticks: {
-            maxTicksLimit: 10
-          }
+          ticks: { maxTicksLimit: 10 }
         },
-
-        y: {
-          beginAtZero: false
-        }
+        y: { beginAtZero: false }
       },
-
       plugins: {
-        legend: {
-          display: true,
-          position: 'top'
-        }
+        legend: { display: true, position: 'top' }
       },
-
       interaction: {
         mode: 'index',
         intersect: false
       }
     },
-
-    plugins: [
-      recessionPlugin
-    ,staticTooltipPlugin
-    ]
+    plugins: [recessionPlugin, staticTooltipPlugin]
   });
 }
 
-
+/* =========================
+   INFLATION CHART
+========================= */
 async function createInflationChart() {
-
-  const ctx = document
-    .getElementById('chart-inflation')
-    .getContext('2d');
+  const canvas = document.getElementById('chart-inflation');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
 
   const data = await fetchAndParseExcel();
-
   if (!data) return;
 
   if (window.inflationChart) {
@@ -105,7 +86,6 @@ async function createInflationChart() {
     type: 'line',
     data: {
       datasets: [
-        // upper IQR
         {
           label: '𝜏 = 0.75',
           data: data.q75,
@@ -116,8 +96,6 @@ async function createInflationChart() {
           borderWidth: 2,
           tension: 0.1
         },
-
-        // lower IQR
         {
           label: '𝜏 = 0.25',
           data: data.q25,
@@ -126,7 +104,6 @@ async function createInflationChart() {
           pointRadius: 0,
           fill: false
         },
-
         {
           label: '𝜏 = 0.95',
           data: data.q95,
@@ -135,7 +112,6 @@ async function createInflationChart() {
           pointRadius: 0,
           tension: 0.1
         },
-
         {
           label: '𝜏 = 0.50',
           data: data.q50,
@@ -144,7 +120,6 @@ async function createInflationChart() {
           pointRadius: 0,
           tension: 0.1
         },
-
         {
           label: '𝜏 = 0.05',
           data: data.q05,
@@ -153,7 +128,6 @@ async function createInflationChart() {
           pointRadius: 0,
           tension: 0.1
         },
-
         {
           label: 'Core PCE',
           data: data.corePCE,
@@ -164,86 +138,54 @@ async function createInflationChart() {
         }
       ]
     },
-
     options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              ticks: {
-                maxTicksLimit: 10, // Added missing comma here to fix syntax crash
-                callback: function(value) {
-                  return Number(value).toFixed(2);
-                }
-              }
-            },
-            y: {
-              beginAtZero: false
-            }
-          },
-          plugins: {
-            legend: {
-              position: 'top'
-            },
-            title: {
-              display: true,
-              text: 'Time-Varying Phillips Curve Slopes'
-            },
-
-            tooltip: {
-              mode: 'index',
-              intersect: false,
-              backgroundColor: 'rgba(0,0,0,0.65)',
-        borderColor: 'rgba(255,255,255,0.12)',
-        borderWidth: 1,
-        cornerRadius: 8,
-
-        titleColor: '#fff',
-        bodyColor: '#fff',
-              callbacks: {
-                label: function(context) {
-                  let label = context.dataset.label || '';
-                  if (label) label += ': ';
-                  if (context.parsed.y !== null) label += context.parsed.y.toFixed(2);
-                  return label;
-                }
-              }
-            }
-          },
-          interaction: {
-            mode: 'index',
-            intersect: false
-          }
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          ticks: { maxTicksLimit: 10 }
         },
-
-        plugins: [
-          recessionPlugin
-    ,staticTooltipPlugin
-        ]
+        y: { beginAtZero: false }
+      },
+      plugins: {
+        legend: { position: 'top' },
+        title: { display: true, text: 'Inflation Quantiles' },
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+          backgroundColor: 'rgba(0,0,0,0.65)',
+          borderColor: 'rgba(255,255,255,0.12)',
+          borderWidth: 1,
+          cornerRadius: 8,
+          titleColor: '#fff',
+          bodyColor: '#fff'
+        }
+      },
+      interaction: {
+        mode: 'index',
+        intersect: false
+      }
+    },
+    plugins: [recessionPlugin, staticTooltipPlugin]
   });
 
-  // mobile: scroll to newest quarter
   setTimeout(() => {
-
     if (window.innerWidth <= 768) {
-
-      scrollChartRight(
-        '#phillipscurve .chart-wrapper'
-      );
-
+      scrollChartRight('#inflation .chart-wrapper');
     }
-
   }, 250);
 }
 
+/* =========================
+   PHILLIPS CURVE CHART
+========================= */
 async function createPhillipsCurveChart() {
+  const canvas = document.getElementById('chart-phillipscurve');
+  if (!canvas) return;
 
-  const ctx = document
-    .getElementById('chart-phillipscurve')
-    .getContext('2d');
+  const ctx = canvas.getContext('2d');
 
   const data = await fetchAndParseExcel();
-
   if (!data) return;
 
   if (window.phillipsChart) {
@@ -252,6 +194,7 @@ async function createPhillipsCurveChart() {
 
   window.phillipsChart = new Chart(ctx, {
     type: 'line',
+
     data: {
       datasets: [
         {
@@ -262,7 +205,6 @@ async function createPhillipsCurveChart() {
           pointRadius: 0,
           tension: 0.1
         },
-
         {
           label: '𝜏 = 0.75',
           data: data.k75,
@@ -271,17 +213,15 @@ async function createPhillipsCurveChart() {
           pointRadius: 0,
           tension: 0.1
         },
-
         {
           label: '𝜏 = 0.50',
           data: data.k50,
           borderColor: '#0072BD',
-          borderDash: [6,4],
+          borderDash: [6, 4],
           borderWidth: 2.5,
           pointRadius: 0,
           tension: 0.1
         },
-
         {
           label: '𝜏 = 0.25',
           data: data.k25,
@@ -290,7 +230,6 @@ async function createPhillipsCurveChart() {
           pointRadius: 0,
           tension: 0.1
         },
-
         {
           label: '𝜏 = 0.05',
           data: data.k05,
@@ -307,33 +246,26 @@ async function createPhillipsCurveChart() {
       maintainAspectRatio: false,
 
       scales: {
-
         x: {
           type: 'time',
-
           time: {
             unit: 'quarter',
             displayFormats: {
               quarter: "yyyy 'Q'q"
             }
           },
-
           ticks: {
             maxTicksLimit: 10
           }
         },
-
         y: {
           beginAtZero: false
         }
       },
 
-
       plugins: {
-
         legend: {
           position: 'top',
-
           labels: {
             font: {
               size: 14
@@ -344,12 +276,10 @@ async function createPhillipsCurveChart() {
         title: {
           display: true,
           text: 'Time-Varying Phillips Curve Slopes',
-
           font: {
             size: 18,
             weight: 'bold'
           },
-
           padding: {
             top: 10,
             bottom: 20
@@ -363,35 +293,10 @@ async function createPhillipsCurveChart() {
           borderColor: 'rgba(255,255,255,0.12)',
           borderWidth: 1,
           cornerRadius: 8,
-
           titleColor: '#fff',
-          bodyColor: '#fff',
-          callbacks: {
-
-            title: function(items) {
-
-              const date = new Date(items[0].parsed.x);
-
-              const quarter =
-                Math.floor(date.getMonth() / 3) + 1;
-
-              return `${date.getFullYear()} Q${quarter}`;
-            },
-
-            label: function(context) {
-
-              let label = context.dataset.label || '';
-
-              if (label) {
-                label += ': ';
-              }
-
-              return label + context.parsed.y.toFixed(3);
-            }
-          }
+          bodyColor: '#fff'
         }
       },
-
 
       interaction: {
         mode: 'index',
@@ -400,117 +305,85 @@ async function createPhillipsCurveChart() {
     },
 
     plugins: [
-      recessionPlugin
-    ,staticTooltipPlugin
+      recessionPlugin,
+      staticTooltipPlugin
     ]
   });
 
-  // mobile: scroll to newest quarter
+  // Hide τ = 0.75 and τ = 0.25
+  window.phillipsChart.setDatasetVisibility(1, false);
+  window.phillipsChart.setDatasetVisibility(3, false);
+
+  window.phillipsChart.update();
+
   setTimeout(() => {
-
     if (window.innerWidth <= 768) {
-
-      scrollChartRight(
-        '#phillipscurve .chart-wrapper'
-      );
-
+      scrollChartRight('#phillipscurve .chart-wrapper');
     }
-
   }, 250);
 }
+
 
 
 /* =========================
    SECTION SWITCHING
 ========================= */
-
 function showSection(id) {
-
-  // hide all sections
   document.querySelectorAll('.section').forEach(section => {
     section.classList.remove('active');
   });
 
-  // show target section
   const target = document.getElementById(id);
-
   if (target) {
     target.classList.add('active');
   }
 
-  // sidebar active link
   document.querySelectorAll('.sidebar nav a').forEach(link => {
     link.classList.remove('active');
-
     const onclickAttr = link.getAttribute('onclick');
-
-    if (
-      onclickAttr &&
-      onclickAttr.includes(`showSection('${id}')`)
-    ) {
+    if (onclickAttr && onclickAttr.includes(`showSection('${id}')`)) {
       link.classList.add('active');
     }
   });
 
-  // update URL
-  history.replaceState(
-    { section: id },
-    '',
-    `?section=${id}`
-  );
+  history.replaceState({ section: id }, '', `?section=${id}`);
 
-  // lazy load charts
+  // Lazy load charts depending on the target section
   if (id === 'estimates' && !timeChart) {
-    setTimeout(() => {
-      createChart();
-    }, 50);
+    setTimeout(() => { createChart(); }, 50);
+  } else if (id === 'phillipscurve' && !window.phillipsChart) {
+    setTimeout(() => { createPhillipsCurveChart(); }, 50);
+  } else if (id === 'inflation' && !window.inflationChart) {
+    setTimeout(() => { createInflationChart(); }, 50);
   }
 }
 
-
 /* =========================
-   RESIZE HANDLING
+   RESIZE & SCROLLING
 ========================= */
-
 function resizeAllCharts() {
-
   Chart.helpers.each(Chart.instances, function(instance) {
     instance.resize();
   });
 }
-
 window.addEventListener('resize', resizeAllCharts);
 
-/* =========================
-   SCROLLIN  HANDLING
-========================= */
-
 function scrollChartRight(selector) {
-
-  const wrapper =
-    document.querySelector(selector);
-
+  const wrapper = document.querySelector(selector);
   if (!wrapper) return;
 
-  const doScroll = () => {
-
-    wrapper.scrollLeft =
-      wrapper.scrollWidth;
-
-  };
-
+  const doScroll = () => { wrapper.scrollLeft = wrapper.scrollWidth; };
   doScroll();
-
   requestAnimationFrame(doScroll);
-
   setTimeout(doScroll, 100);
-
   setTimeout(doScroll, 300);
 }
 
 /* =========================
-   OPTIONAL GLOBALS
+   INITIAL LOAD HANDLING
 ========================= */
-
-const seriesKeys = ['rstar', 'estimate'];
-const labels = ['r*', 'Estimate'];
+document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialSection = urlParams.get('section') || 'estimates';
+  showSection(initialSection);
+});
