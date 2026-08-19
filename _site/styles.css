@@ -164,6 +164,62 @@ body {
 }
 
 /* =====================
+   PUBLICATIONS & RESEARCH
+===================== */
+#publications {
+  color: #333;
+}
+
+#publications ul {
+  padding-left: 20px;
+}
+
+#publications li {
+  margin-bottom: 12px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+
+#publications a:link,
+#publications a:visited,
+#research a:link,
+#research a:visited {
+  color: #0073b1;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+#publications a:hover,
+#research a:hover {
+  text-decoration: underline;
+  color: #005580;
+}
+
+#research {
+  color: #333;
+}
+
+#research ul {
+  list-style-type: disc;
+  padding-left: 1.2em;
+  margin-top: 0.5em;
+}
+
+#research li {
+  margin-bottom: 1em;
+  line-height: 1.6;
+  color: #333;
+}
+
+#research h3 {
+  color: #222;
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+/* =====================
    FOOTER & TEXT
 ===================== */
 footer {
@@ -263,6 +319,12 @@ canvas.responsive-canvas {
     margin: 0 auto;
   }
 }
+
+#publications,
+#research {
+  color: #333;
+}
+
 
 /* =====================
    MOBILE ADJUSTMENTS
