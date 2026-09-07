@@ -362,6 +362,7 @@ function showSection(id) {
   } else if (id === 'inflation' && !window.inflationChart) {
     setTimeout(() => { createInflationChart(); }, 50);
   }
+}
 
 /* =========================
    RESIZE & SCROLLING

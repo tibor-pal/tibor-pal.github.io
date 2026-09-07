@@ -238,17 +238,30 @@
           </div>
         </div>
 
+
+
         <p class="note-text">
-          Note: Shaded vertical areas indicate U.S. recessions as dated by the National Bureau of Economic Research (NBER). The Q3 2026 estimates will be available by mid-December.
+          Shaded vertical areas indicate U.S. recessions as dated by the National Bureau of Economic Research (NBER).
+          The shaded bands represent confidence intervals based on 5,000 simulated series.
+          The Q3 2026 estimates will be available by mid-December.
+        </p>
+
+        <p class="note-text">
+          HLW denotes the Holston-Laubach-Williams estimates reported by the Federal Reserve Bank of New York in
+          <a href="https://www.newyorkfed.org/research/policy/rstar" target="_blank" rel="noopener noreferrer">
+            <em>Measuring the Natural Rate of Interest</em>
+          </a>.
+          CBO denotes the Congressional Budget Office estimate of the U.S. output gap.
         </p>
 
         <p class="source-text">
-    <!--    <p style="font-size: 14px; margin-bottom: 20px; color: #666;"> -->
-              Source: Calculations use the methodology (aaGAS specification) outlined in
-          <a href="https://mpra.ub.uni-muenchen.de/125338/" target="_blank">
-            <em>Pál, Tibor and Storti, Giuseppe: Estimating the R-Star in the US: A Score-Driven State-Space Model with Time-Varying Volatility Persistence (2025, Working Paper)</em>
+          Source: Author's calculations. The aaGAS estimates use the methodology (aaGAS specification) outlined in
+          <a href="https://mpra.ub.uni-muenchen.de/125338/" target="_blank" rel="noopener noreferrer">
+            <em>Pál, Tibor and Storti, Giuseppe: Estimating the R-Star in the US: A Score-Driven State-Space Model with Time-Varying Volatility Persistence</em>
+            (2025, Working Paper)
           </a>.
         </p>
+
 
       </section>
 
@@ -451,12 +464,14 @@
 
       return {
 
-        // R-Star project
+        // R-Star project current estimates
+
         rStar: parseSeries('rStar'),
         rStar_sm: parseSeries('rStar_sm'),
         rStar_med: parseSeries('rStar_med'),
         r68_lower: parseSeries('r68_lower'),
         r68_upper: parseSeries('r68_upper'),
+        hlw_rStar: parseSeries('hlwRstar'),
 
         yGap: parseSeries('yGap'),
         y95_lower: parseSeries('y95_lower'), // it is the 68, not 95, excel has different name too
@@ -466,9 +481,18 @@
 
         hlw_yGap: parseSeries('hlwGap'),
         cbo: parseSeries('cbo'),
+
         b3: parseSeries('b3'),
+
         a3: parseSeries('a3'),
+        a95_lower: parseSeries('a95_lower'), // it is the 68, not 95, excel has different name too
+        a95_upper: parseSeries('a95_upper'), // it is the 68, not 95, excel has different name too
+        a3_hlw: parseSeries('hlwIS'),
+
         infVol: parseSeries('infVol'),
+        inf95_lower: parseSeries('inf95_lower'), // it is the 68, not 95, excel has different name too
+        inf95_upper: parseSeries('inf95_upper'), // it is the 68, not 95, excel has different name too
+        infVol_hlw: parseSeries('hlwInfVol'),
 
         // Inflation dynamics
         q95: parseSeries('q95'),
@@ -509,6 +533,8 @@ const yAxisLabel =
 
     const showLegend =
       canvasId === 'chart-rstar' ||
+      canvasId === 'chart-isCurve' ||
+      canvasId === 'chart-volatility'||
       canvasId === 'chart-outputGap';
 
 if (!data) {
@@ -533,7 +559,7 @@ if (window[canvasId + 'Chart']) {
 
 /*
  * ============================================================
- * R-STAR: ADD 68% CONFIDENCE INTERVAL
+ * R-STAR: ADD 68% CI
  * ============================================================
  */
 
@@ -593,7 +619,22 @@ if (canvasId === 'chart-rstar') {
       fill: false,
       tension: 0.1,
       pointRadius: 0
+    },
+
+    // HLW
+    {
+      label: labels[2],
+      data: data[seriesKeys[2]],
+      borderColor: '#7E2F8E',
+      borderWidth: 2.5,
+      borderDash: [12, 8],
+      backgroundColor: 'transparent',
+      fill: false,
+      tension: 0.1,
+      pointRadius: 0
     }
+
+
   ];
 
   } else if (canvasId === 'chart-outputGap') {
@@ -668,8 +709,112 @@ if (canvasId === 'chart-rstar') {
 
     ];
 
+  } else if (canvasId === 'chart-volatility') {
 
+    datasets = [
 
+      // 68% CI LOWER BOUND
+      {
+        label: '',
+        data: data.inf95_lower,
+        borderColor: 'transparent',
+        backgroundColor: 'transparent',
+        pointRadius: 0,
+        fill: false,
+        tension: 0.1
+      },
+
+      // 68% CI UPPER BOUND
+      {
+        label: '90% CI',
+        data: data.inf95_upper,
+        borderColor: 'transparent',
+        backgroundColor: 'rgba(135, 206, 235, 0.45)',
+        pointRadius: 0,
+        fill: '-1',
+        tension: 0.1
+      },
+
+      // aaGAS
+      {
+        label: 'aaGAS',
+        data: data.infVol,
+        borderColor: '#0072BD',
+        borderWidth: 2.5,
+        backgroundColor: 'transparent',
+        fill: false,
+        tension: 0.1,
+        pointRadius: 0
+      },
+
+      // HLW
+      {
+        label: 'HLW',
+        data: data.infVol_hlw,
+        borderColor: '#7E2F8E',
+        borderWidth: 2.5,
+        borderDash: [12, 8],
+        backgroundColor: 'transparent',
+        fill: false,
+        tension: 0.1,
+        pointRadius: 0
+      }
+    ];
+
+  }  else if (canvasId === 'chart-isCurve') {
+
+    datasets = [
+        // Lower bound
+        {
+            label: '',
+            data: data.a95_lower,
+            borderColor: 'transparent',
+            backgroundColor: 'transparent',
+            pointRadius: 0,
+            borderWidth: 0,
+            fill: false
+        },
+
+        // Upper bound + shaded CI
+        {
+            label: '90% CI',
+            data: data.a95_upper,
+            borderColor: 'transparent',
+            borderWidth: 0,
+            backgroundColor: 'rgba(135, 206, 235, 0.45)',
+            pointRadius: 0,
+            fill: {
+              target: 0
+            },
+            tension: 0.1
+        },
+
+        // aaGAS
+        {
+            label: 'aaGAS',
+            data: data.a3,
+            borderColor: '#0072BD',
+            borderWidth: 2.5,
+            borderDash: [],
+            backgroundColor: 'transparent',
+            fill: false,
+            tension: 0.1,
+            pointRadius: 0
+        },
+
+        // HLW
+        {
+            label: 'HLW',
+            data: data.a3_hlw,
+            borderColor: '#7E2F8E',
+            borderWidth: 2.5,
+            borderDash: [12, 8],
+            backgroundColor: 'transparent',
+            fill: false,
+            tension: 0.1,
+            pointRadius: 0
+        }
+    ];
 
 } else {
 
@@ -743,7 +888,12 @@ window[canvasId + 'Chart'] = new Chart(ctx, {
           ? new Date(2000, 0, 1).getTime()
           : new Date(startYear, 0, 1).getTime(),
 
-        max: data.q50[data.q50.length - 1].x.getTime(),
+        max:
+            canvasId === 'chart-volatility'
+              ? data.infVol[data.infVol.length - 1].x.getTime()
+              : canvasId === 'chart-isCurve'
+                ? data.a3[data.a3.length - 1].x.getTime()
+                : data.q50[data.q50.length - 1].x.getTime(),
 
         ticks: {
           source: 'values',
@@ -940,7 +1090,7 @@ window[canvasId + 'Chart'] = new Chart(ctx, {
           datasets: [
 
             /* =========================
-               95% CONFIDENCE INTERVAL
+               95% CI
             ========================= */
 
             {
@@ -1697,8 +1847,8 @@ window[canvasId + 'Chart'] = new Chart(ctx, {
     switch (tabId) {
       case 'rstar':
         createChart(
-          ['rStar_med', 'rStar_sm'],
-          ['R-Star (Filtered)', 'R-Star (Smoothed)'],
+          ['rStar_med', 'rStar_sm', 'hlw_rStar'],
+          ['aaGAS (Filtered)', 'aaGAS (smoothed)', 'HLW (Filtered)'],
           'The Natural Rate of Interest (R-Star) in the United States',
           'chart-rstar', { yMin: 0 }
         );
@@ -1713,25 +1863,19 @@ window[canvasId + 'Chart'] = new Chart(ctx, {
           );
           break;
 
-    //    case 'outputGap':
-    //      if (!window.outputGapChart) {
-    //        createOutputGapChart();
-    //      }
-    //      break;
-
-      case 'isCurve':
-        createChart(
-          ['a3'],
-          ['IS Curve Slope'],
-          'IS Curve Slope Parameter in the United States',
-          'chart-isCurve'
-        );
-        break;
+          case 'isCurve':
+            createChart(
+              ['a3', 'a3_hlw'],
+              ['aaGAS', 'HLW'],
+              'IS Curve Slope Parameter in the United States',
+              'chart-isCurve'
+            );
+            break;
 
       case 'volatility':
         createChart(
-          ['infVol'],
-          ['Inflation Volatility'],
+          ['infVol', 'infVol_hlw'],
+          ['aaGAS', 'HLW'],
           'Inflation Volatility in the United States',
           'chart-volatility'
         );
