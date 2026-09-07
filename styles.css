@@ -338,20 +338,19 @@ canvas.responsive-canvas {
     padding: 0;
   }
 
-  .chart-wrapper {
+  .chart-wrapper,
+  .plot-wrapper {
     width: 100%;
     overflow-x: auto;
+    overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
   }
 
-  .chart-scroll-inner {
-    width: 800px;
-    min-width: 800px;
-  }
-
-  canvas.responsive-canvas {
-    width: 100%;
-    height: auto;
+  .chart-wrapper canvas,
+  .plot-wrapper canvas {
+    width: 900px !important;
+    max-width: none !important;
+    height: 420px !important;
     display: block;
   }
 }

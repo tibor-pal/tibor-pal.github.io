@@ -368,15 +368,14 @@ function showSection(id) {
    RESIZE & SCROLLING
 ========================= */
 
-function scrollChartRight(selector) {
-  const wrapper = document.querySelector(selector);
-  if (!wrapper) return;
+function scrollChartsToLatest() {
+  if (window.innerWidth > 768) return;
 
-  const doScroll = () => { wrapper.scrollLeft = wrapper.scrollWidth; };
-  doScroll();
-  requestAnimationFrame(doScroll);
-  setTimeout(doScroll, 100);
-  setTimeout(doScroll, 300);
+  document.querySelectorAll('.chart-wrapper, .plot-wrapper').forEach(wrapper => {
+    requestAnimationFrame(() => {
+      wrapper.scrollLeft = wrapper.scrollWidth;
+    });
+  });
 }
 
 /* =========================
