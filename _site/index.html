@@ -454,7 +454,18 @@
         // R-Star project
         rStar: parseSeries('rStar'),
         rStar_sm: parseSeries('rStar_sm'),
+        rStar_med: parseSeries('rStar_med'),
+        r68_lower: parseSeries('r68_lower'),
+        r68_upper: parseSeries('r68_upper'),
+
         yGap: parseSeries('yGap'),
+        y95_lower: parseSeries('y95_lower'), // it is the 68, not 95, excel has different name too
+        y95_upper: parseSeries('y95_upper'), // it is the 68, not 95, excel has different name too
+        y68_lower: parseSeries('y68_lower'),
+        y68_upper: parseSeries('y68_upper'),
+
+        hlw_yGap: parseSeries('hlwGap'),
+        cbo: parseSeries('cbo'),
         b3: parseSeries('b3'),
         a3: parseSeries('a3'),
         infVol: parseSeries('infVol'),
@@ -485,139 +496,607 @@
     }
   }
 
-    async function createChart(seriesKeys, labels, chartTitle, canvasId) {
-      const ctx = document.getElementById(canvasId).getContext('2d');
-      const data = await fetchAndParseExcel();
-      const yAxisLabel = (canvasId === 'chart-volatility' || canvasId === 'chart-isCurve' || canvasId === 'chart-phillipscurve') ? '' : 'Percent';
-      const showLegend = canvasId === 'chart-rstar';
+  async function createChart(seriesKeys, labels, chartTitle, canvasId) {
+const ctx = document.getElementById(canvasId).getContext('2d');
+const data = await fetchAndParseExcel();
 
-      if (!data) {
-        console.warn('No data loaded');
-        return;
-      }
+const yAxisLabel =
+  (canvasId === 'chart-volatility' ||
+   canvasId === 'chart-isCurve' ||
+   canvasId === 'chart-phillipscurve')
+    ? ''
+    : 'Percent';
 
-      let yMin = undefined;
-      if (canvasId === 'chart-rstar') {
-        yMin = 0;
-      }
-      if (canvasId === 'chart-outputGap') {
-        yMin = -10;
-      }
-      // Destroy existing chart if it exists
-      if (window[canvasId + 'Chart']) {
-        window[canvasId + 'Chart'].destroy();
-      }
+const showLegend = canvasId === 'chart-rstar';
 
-      // Create datasets for each series
-      const datasets = seriesKeys.map((key, index) => ({
-        label: labels[index],
-        data: data[key],
-        borderColor: index === 0 ? '#0072BD' : 'green',
-        borderWidth: 2,
-        fill: false,
-        tension: 0.1,
-        pointRadius: 0
-    }));
+if (!data) {
+  console.warn('No data loaded');
+  return;
+}
 
+let yMin = undefined;
 
-      const tickYears = [];
-      for (let y = Math.ceil(startYear+1 / 5) * 5; y <= endYear; y += 5) {
-        tickYears.push(new Date(y, 0, 1).getTime()); // timestamps
-      }
-      // Create the new chart
-      window[canvasId + 'Chart'] = new Chart(ctx, {
-        type: 'line',
-        data: { datasets },
-        options: {
-          responsive: true,
-          scales: {
-            x: {
+if (canvasId === 'chart-rstar') {
+  yMin = 0;
+}
+
+if (canvasId === 'chart-outputGap') {
+  yMin = -10;
+}
+
+// Destroy existing chart if it exists
+if (window[canvasId + 'Chart']) {
+  window[canvasId + 'Chart'].destroy();
+}
+
+/*
+ * ============================================================
+ * R-STAR: ADD 68% CONFIDENCE INTERVAL
+ * ============================================================
+ */
+
+let datasets = [];
+
+if (canvasId === 'chart-rstar') {
+
+  datasets = [
+
+    // 68% CI LOWER BOUND
+    {
+      label: '',
+      data: data.r68_lower,
+      borderColor: 'transparent',
+      borderWidth: 0,
+      backgroundColor: 'transparent',
+      pointRadius: 0,
+      fill: false,
+      tension: 0.1
+    },
+
+    // 68% CI UPPER BOUND
+    {
+      label: '68% CI',
+      data: data.r68_upper,
+      borderColor: 'transparent',
+      borderWidth: 0,
+      backgroundColor: 'rgba(135, 206, 235, 0.45)',
+      pointRadius: 0,
+      fill: {
+        target: 0
+      },
+      tension: 0.1
+    },
+
+    // R-STAR FILTERED
+    {
+      label: labels[0],
+      data: data[seriesKeys[0]],
+      borderColor: '#0072BD',
+      borderWidth: 2.5,
+      borderDash: [],
+      backgroundColor: 'transparent',
+      fill: false,
+      tension: 0.1,
+      pointRadius: 0
+    },
+
+    // R-STAR SMOOTHED
+    {
+      label: labels[1],
+      data: data[seriesKeys[1]],
+      borderColor: '#77AC30',
+      borderWidth: 2.5,
+      borderDash: [],
+      backgroundColor: 'transparent',
+      fill: false,
+      tension: 0.1,
+      pointRadius: 0
+    }
+  ];
+
+} else {
+
+  /*
+   * ============================================================
+   * ALL OTHER CHARTS: UNCHANGED
+   * ============================================================
+   */
+
+  datasets = seriesKeys.map((key, index) => ({
+    label: labels[index],
+    data: data[key],
+
+    borderColor: [
+      '#0072BD',
+      '#77AC30',
+      '#D95319'
+    ][index],
+
+    borderDash: [
+      [],
+      [],
+      [12, 8]
+    ][index],
+
+    borderWidth: 2.5,
+    fill: false,
+    tension: 0.1,
+    pointRadius: 0
+  }));
+}
+
+const tickYears = [];
+
+for (
+  let y = Math.ceil((startYear + 1) / 5) * 5;
+  y <= endYear;
+  y += 5
+) {
+  tickYears.push(new Date(y, 0, 1).getTime());
+}
+
+// Create the chart
+window[canvasId + 'Chart'] = new Chart(ctx, {
+
+  type: 'line',
+
+  data: {
+    datasets: datasets
+  },
+
+  options: {
+
+    responsive: true,
+
+    scales: {
+
+      x: {
         type: 'time',
         bounds: 'ticks',
         distribution: 'linear',
+
         time: {
           unit: 'year',
-          displayFormats: { year: 'yyyy' }
+          displayFormats: {
+            year: 'yyyy'
+          }
         },
-        min: new Date(startYear, 0, 1).getTime(),
+
+        min: canvasId === 'chart-outputGap'
+          ? new Date(2000, 0, 1).getTime()
+          : new Date(startYear, 0, 1).getTime(),
+
         max: data.q50[data.q50.length - 1].x.getTime(),
+
         ticks: {
-          source: 'values',           // use only the values in tickYears
-          values: tickYears,          // your 5-year timestamps
+          source: 'values',
+          values: tickYears,
           autoSkip: false,
           maxRotation: 0,
-          font: { size: 14 },
+          font: {
+            size: 14
+          },
+
           callback: function(value) {
             const year = new Date(value).getFullYear();
-            // Only label years divisible by 5 (your tickYears)
             return year % 5 === 0 ? year : '';
           }
         },
+
         grid: {
           display: true,
           drawTicks: true,
+
           color: (context) => {
-            const year = new Date(context.tick.value).getFullYear();
-            return year % 5 === 0 ? '#ccc' : 'transparent';
+            const year =
+              new Date(context.tick.value).getFullYear();
+
+            return year % 5 === 0
+              ? '#ccc'
+              : 'transparent';
           },
+
           lineWidth: (context) => {
-            const year = new Date(context.tick.value).getFullYear();
+            const year =
+              new Date(context.tick.value).getFullYear();
+
             return year % 5 === 0 ? 1 : 0;
           }
         }
       },
 
-            y: {
-              beginAtZero: false,
-              min: yMin,
-              title: {
-                display: !!yAxisLabel,
-                text: yAxisLabel,
-                font: { size: 12 }
-              },
-              ticks: { font: { size: 14 } },
-              grid: {
-                color: (context) => context.tick.value === 0 ? '#ccc' : '#eee',
-                lineWidth: (context) => context.tick.value === 0 ? 2 : 1
-              }
-            }
+      y: {
+
+        beginAtZero: false,
+
+        min: yMin,
+
+        title: {
+          display: !!yAxisLabel,
+          text: yAxisLabel,
+          font: {
+            size: 12
+          }
+        },
+
+        ticks: {
+          font: {
+            size: 14
+          }
+        },
+
+        grid: {
+          color: (context) =>
+            context.tick.value === 0
+              ? '#ccc'
+              : '#eee',
+
+          lineWidth: (context) =>
+            context.tick.value === 0
+              ? 2
+              : 1
+        }
+      }
+    },
+
+    plugins: {
+
+      title: {
+        display: true,
+        text: chartTitle,
+        font: {
+          size: 18,
+          weight: 'bold'
+        },
+        padding: {
+          top: 10,
+          bottom: 20
+        }
+      },
+
+      legend: {
+
+        display: showLegend,
+
+        labels: {
+          font: {
+            size: 14
           },
-          plugins: {
-            title: {
-              display: true,
-              text: chartTitle,
-              font: { size: 18, weight: 'bold' },
-              padding: { top: 10, bottom: 20 }
-            },
-            legend: {
-  display: showLegend,
-  labels: { font: { size: 14 } }
-},
-            tooltip: {
-              mode: 'index',
-              intersect: false,
-              backgroundColor: 'rgba(0,0,0,0.65)',
+
+          filter: function(item) {
+            return item.text !== '';
+          }
+        }
+      },
+
+      tooltip: {
+
+        mode: 'index',
+        intersect: false,
+
+        filter: function(context) {
+          return context.dataset.label !== '68% CI';
+        },
+
+        backgroundColor: 'rgba(0,0,0,0.65)',
         borderColor: 'rgba(255,255,255,0.12)',
         borderWidth: 1,
         cornerRadius: 8,
 
         titleColor: '#fff',
         bodyColor: '#fff',
-              callbacks: {
-                title: function (items) {
-                  const date = new Date(items[0].parsed.x);
-                  const quarter = Math.floor(date.getMonth() / 3) + 1;
-                  return `${date.getFullYear()}: Q${quarter}`;
+
+        callbacks: {
+
+          title: function(items) {
+
+            const date = new Date(items[0].parsed.x);
+
+            const quarter =
+              Math.floor(date.getMonth() / 3) + 1;
+
+            return `${date.getFullYear()}: Q${quarter}`;
+          },
+
+          label: function(context) {
+
+            const label = context.dataset.label;
+
+            if (!label) {
+              return '';
+            }
+
+            if (context.parsed.y !== null) {
+              return `${label}: ${context.parsed.y.toFixed(2)}`;
+            }
+
+            return label;
+          }
+        }
+      }
+    },
+
+    interaction: {
+      mode: 'nearest',
+      intersect: false
+    }
+  },
+
+  plugins: [
+    recessionPlugin,
+    staticTooltipPlugin
+  ]
+});
+}
+
+    /* =========================
+       OUTPUT GAP CHART
+    ========================= */
+    async function createOutputGapChart() {
+
+      const canvas = document.getElementById('chart-outputGap');
+      if (!canvas) {
+        console.warn('Output Gap canvas not found');
+        return;
+      }
+
+      const ctx = canvas.getContext('2d');
+
+      // Destroy existing chart
+      const existingChart = Chart.getChart(canvas);
+      if (existingChart) {
+        existingChart.destroy();
+      }
+
+      // Load Excel data
+      const data = await fetchAndParseExcel();
+
+      if (!data) {
+        console.warn('No data loaded for Output Gap chart');
+        return;
+      }
+
+      // Create Output Gap chart
+      window.outputGapChart = new Chart(ctx, {
+
+        type: 'line',
+
+        data: {
+          datasets: [
+
+            /* =========================
+               95% CONFIDENCE INTERVAL
+            ========================= */
+
+            {
+              label: '',
+              data: data.y95_lower,
+              borderColor: 'transparent',
+              borderWidth: 0,
+              pointRadius: 0,
+              fill: false
+            },
+
+            {
+              label: '68% CI', // correct
+              data: data.y95_upper,
+              borderColor: 'transparent',
+              borderWidth: 0,
+              backgroundColor: 'rgba(135, 206, 235, 0.45)',
+              pointRadius: 0,
+              fill: '-1',
+              tension: 0.1
+            },
+
+            /* =========================
+               aaGAS — SOLID BLUE
+            ========================= */
+
+            {
+              label: 'aaGAS',
+              data: data.yGap,
+              borderColor: '#0072BD',
+              borderWidth: 2.5,
+              borderDash: [],
+              backgroundColor: 'transparent',
+              fill: false,
+              tension: 0.1,
+              pointRadius: 0
+            },
+
+            /* =========================
+               CBO — DASHED ORANGE
+            ========================= */
+
+            {
+              label: 'CBO',
+              data: data.cbo,
+              borderColor: '#D95319',
+              borderWidth: 2.5,
+              borderDash: [12, 8],
+              backgroundColor: 'transparent',
+              fill: false,
+              tension: 0.1,
+              pointRadius: 0
+            },
+
+            /* =========================
+               HLW — DASHED PURPLE
+            ========================= */
+
+            {
+              label: 'HLW',
+              data: data.hlw_yGap,
+              borderColor: '#7E2F8E',
+              borderWidth: 2.5,
+              borderDash: [12, 8],
+              backgroundColor: 'transparent',
+              fill: false,
+              tension: 0.1,
+              pointRadius: 0
+            }
+          ]
+        },
+
+        options: {
+
+          responsive: true,
+          maintainAspectRatio: false,
+
+          scales: {
+
+            x: {
+              type: 'time',
+              bounds: 'ticks',
+              distribution: 'linear',
+
+              min: new Date(2000, 0, 1).getTime(),
+
+              max: data.yGap[data.yGap.length - 1].x.getTime(),
+
+              time: {
+                unit: 'year',
+                displayFormats: {
+                  year: 'yyyy'
+                }
+              },
+
+              ticks: {
+                maxTicksLimit: 10,
+                maxRotation: 0,
+                font: {
+                  size: 14
+                }
+              }
+            },
+
+            y: {
+
+              beginAtZero: false,
+              min: -10,
+
+              title: {
+                display: true,
+                text: 'Percent',
+                font: {
+                  size: 12
+                }
+              },
+
+              ticks: {
+                font: {
+                  size: 14
+                }
+              },
+
+              grid: {
+
+                color: function(context) {
+                  return context.tick.value === 0
+                    ? '#ccc'
+                    : '#eee';
+                },
+
+                lineWidth: function(context) {
+                  return context.tick.value === 0
+                    ? 2
+                    : 1;
                 }
               }
             }
           },
-          interaction: { mode: 'nearest', intersect: false }
+
+          plugins: {
+
+            title: {
+              display: true,
+              text: 'Output Gap in the United States',
+              font: {
+                size: 18,
+                weight: 'bold'
+              },
+              padding: {
+                top: 10,
+                bottom: 20
+              }
+            },
+
+            legend: {
+
+              display: true,
+              position: 'top',
+
+              labels: {
+                font: {
+                  size: 14
+                },
+
+                filter: function(item) {
+                  return item.text !== '';
+                }
+              }
+            },
+
+            tooltip: {
+
+              mode: 'index',
+              intersect: false,
+
+              filter: function(context) {
+                // Do not show the CI in the black tooltip box
+                return context.dataset.label !== '68% CI';
+              },
+
+              callbacks: {
+
+                title: function(items) {
+
+                  const date = new Date(items[0].parsed.x);
+
+                  const quarter =
+                    Math.floor(date.getMonth() / 3) + 1;
+
+                  return `${date.getFullYear()}: Q${quarter}`;
+                },
+
+                label: function(context) {
+
+                  const label = context.dataset.label;
+
+                  if (!label) {
+                    return '';
+                  }
+
+                  if (context.parsed.y !== null) {
+                    return `${label}: ${context.parsed.y.toFixed(2)}`;
+                  }
+
+                  return label;
+                }
+              }
+            }
+          },
+
+          interaction: {
+            mode: 'index',
+            intersect: false
+          }
         },
-        plugins: [recessionPlugin
-      ,staticTooltipPlugin
+
+        plugins: [
+          recessionPlugin,
+          staticTooltipPlugin
         ]
       });
+
+      console.log(
+        'Output Gap datasets:',
+        window.outputGapChart.data.datasets.map(d => ({
+          label: d.label,
+          color: d.borderColor,
+          dash: d.borderDash
+        }))
+      );
     }
 
     async function createInflationChart() {
@@ -1143,22 +1622,16 @@
     switch (tabId) {
       case 'rstar':
         createChart(
-          ['rStar', 'rStar_sm'],
+          ['rStar_med', 'rStar_sm'],
           ['R-Star (Filtered)', 'R-Star (Smoothed)'],
           'The Natural Rate of Interest (R-Star) in the United States',
           'chart-rstar', { yMin: 0 }
         );
         break;
 
-      case 'outputGap':
-        createChart(
-          ['yGap'],
-          ['Output Gap'],
-          'Output Gap in the United States',
-          'chart-outputGap'
-        );
-        break;
-
+        case 'outputGap':
+          createOutputGapChart();
+          break;
       case 'isCurve':
         createChart(
           ['a3'],

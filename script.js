@@ -67,6 +67,7 @@ function createChart() {
   });
 }
 
+
 /* =========================
    INFLATION CHART
 ========================= */
@@ -351,12 +352,16 @@ function showSection(id) {
   // Lazy load charts depending on the target section
   if (id === 'estimates' && !timeChart) {
     setTimeout(() => { createChart(); }, 50);
+
+  } else if (id === 'outputGap' && !window.outputGapChart) {
+    setTimeout(() => { createOutputGapChart(); }, 50);
+
   } else if (id === 'phillipscurve' && !window.phillipsChart) {
     setTimeout(() => { createPhillipsCurveChart(); }, 50);
+
   } else if (id === 'inflation' && !window.inflationChart) {
     setTimeout(() => { createInflationChart(); }, 50);
   }
-}
 
 /* =========================
    RESIZE & SCROLLING
