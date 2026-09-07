@@ -351,16 +351,28 @@ function showSection(id) {
 
   // Lazy load charts depending on the target section
   if (id === 'estimates' && !timeChart) {
-    setTimeout(() => { createChart(); }, 50);
+    setTimeout(() => {
+      createChart();
+      setTimeout(scrollChartsToLatest, 300);
+    }, 100);
 
   } else if (id === 'outputGap' && !window.outputGapChart) {
-    setTimeout(() => { createOutputGapChart(); }, 50);
+    setTimeout(() => {
+      createOutputGapChart();
+      setTimeout(scrollChartsToLatest, 300);
+    }, 100);
 
   } else if (id === 'phillipscurve' && !window.phillipsChart) {
-    setTimeout(() => { createPhillipsCurveChart(); }, 50);
+    setTimeout(async () => {
+      await createPhillipsCurveChart();
+      setTimeout(scrollChartsToLatest, 100);
+    }, 100);
 
   } else if (id === 'inflation' && !window.inflationChart) {
-    setTimeout(() => { createInflationChart(); }, 50);
+    setTimeout(async () => {
+      await createInflationChart();
+      setTimeout(scrollChartsToLatest, 100);
+    }, 100);
   }
 }
 
@@ -372,9 +384,15 @@ function scrollChartsToLatest() {
   if (window.innerWidth > 768) return;
 
   document.querySelectorAll('.chart-wrapper, .plot-wrapper').forEach(wrapper => {
-    requestAnimationFrame(() => {
-      wrapper.scrollLeft = wrapper.scrollWidth;
-    });
+    const scrollToRight = () => {
+      wrapper.scrollLeft = wrapper.scrollWidth - wrapper.clientWidth;
+    };
+
+    scrollToRight();
+    requestAnimationFrame(scrollToRight);
+    setTimeout(scrollToRight, 100);
+    setTimeout(scrollToRight, 300);
+    setTimeout(scrollToRight, 600);
   });
 }
 

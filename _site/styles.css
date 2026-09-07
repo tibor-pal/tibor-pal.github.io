@@ -348,24 +348,10 @@ canvas.responsive-canvas {
 
   .chart-wrapper canvas,
   .plot-wrapper canvas {
+    min-width: 900px !important;
     width: 900px !important;
     max-width: none !important;
     height: 420px !important;
     display: block;
   }
-}
-
-html,
-body {
-  font-family: sans-serif;
-  margin: 0;
-  padding: 0;
-  height: auto;
-  background-color: #f5f5f5;
-  overflow-x: hidden;
-}
-
-.container {
-  min-height: 0 !important;
-  height: auto !important;
 }
