@@ -1058,6 +1058,15 @@ window[canvasId + 'Chart'] = new Chart(ctx, {
 });
 }
 
+// On mobile, automatically show the most recent observations
+if (window.innerWidth <= 768) {
+  const container = document.getElementById(canvasId).parentElement;
+
+  setTimeout(() => {
+    container.scrollLeft = container.scrollWidth;
+  }, 100);
+}
+
     /* =========================
        OUTPUT GAP CHART
     ========================= */
