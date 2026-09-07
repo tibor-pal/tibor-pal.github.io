@@ -351,49 +351,31 @@ function showSection(id) {
 
   // Lazy load charts depending on the target section
   if (id === 'estimates' && !timeChart) {
-    setTimeout(() => {
-      createChart();
-      setTimeout(scrollChartsToLatest, 300);
-    }, 100);
+    setTimeout(() => { createChart(); }, 50);
 
   } else if (id === 'outputGap' && !window.outputGapChart) {
-    setTimeout(() => {
-      createOutputGapChart();
-      setTimeout(scrollChartsToLatest, 300);
-    }, 100);
+    setTimeout(() => { createOutputGapChart(); }, 50);
 
   } else if (id === 'phillipscurve' && !window.phillipsChart) {
-    setTimeout(async () => {
-      await createPhillipsCurveChart();
-      setTimeout(scrollChartsToLatest, 100);
-    }, 100);
+    setTimeout(() => { createPhillipsCurveChart(); }, 50);
 
   } else if (id === 'inflation' && !window.inflationChart) {
-    setTimeout(async () => {
-      await createInflationChart();
-      setTimeout(scrollChartsToLatest, 100);
-    }, 100);
+    setTimeout(() => { createInflationChart(); }, 50);
   }
-}
 
 /* =========================
    RESIZE & SCROLLING
 ========================= */
 
-function scrollChartsToLatest() {
-  if (window.innerWidth > 768) return;
+function scrollChartRight(selector) {
+  const wrapper = document.querySelector(selector);
+  if (!wrapper) return;
 
-  document.querySelectorAll('.chart-wrapper, .plot-wrapper').forEach(wrapper => {
-    const scrollToRight = () => {
-      wrapper.scrollLeft = wrapper.scrollWidth - wrapper.clientWidth;
-    };
-
-    scrollToRight();
-    requestAnimationFrame(scrollToRight);
-    setTimeout(scrollToRight, 100);
-    setTimeout(scrollToRight, 300);
-    setTimeout(scrollToRight, 600);
-  });
+  const doScroll = () => { wrapper.scrollLeft = wrapper.scrollWidth; };
+  doScroll();
+  requestAnimationFrame(doScroll);
+  setTimeout(doScroll, 100);
+  setTimeout(doScroll, 300);
 }
 
 /* =========================
