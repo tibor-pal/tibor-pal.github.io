@@ -1971,7 +1971,20 @@ if (window.innerWidth <= 768) {
 
   window.addEventListener('DOMContentLoaded', () => {
     const section = new URLSearchParams(location.search).get('section') || 'about';
-    showSection(section);
+
+    const tabs = {
+      'r-star': 'rstar',
+      'output-gap': 'outputGap',
+      'is-curve': 'isCurve',
+      'volatility': 'volatility'
+    };
+
+    if (tabs[section]) {
+      showSection('r-star');
+      showResultTab(tabs[section]);
+    } else {
+      showSection(section);
+    }
   });
 
   window.addEventListener('popstate', (event) => {
