@@ -840,15 +840,13 @@ window[canvasId + 'Chart'] = new Chart(ctx, {
         return;
       }
 
-      const ctx = canvas.getContext('2d');
-
-      // Destroy existing chart
-      const existingChart = Chart.getChart(canvas);
-      if (existingChart) {
-        existingChart.destroy();
+      // Prevent duplicate initialization
+      if (window.outputGapChart) {
+        return;
       }
 
-      // Load Excel data
+      const ctx = canvas.getContext('2d');
+
       const data = await fetchAndParseExcel();
 
       if (!data) {
@@ -1630,8 +1628,11 @@ window[canvasId + 'Chart'] = new Chart(ctx, {
         break;
 
         case 'outputGap':
-          createOutputGapChart();
+          if (!window.outputGapChart) {
+            createOutputGapChart();
+          }
           break;
+
       case 'isCurve':
         createChart(
           ['a3'],
