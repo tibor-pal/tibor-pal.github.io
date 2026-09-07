@@ -199,10 +199,21 @@
 
         <!-- Horizontal Buttons -->
         <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-          <button onclick="showResultTab('rstar')"      >R-Star</button>
-          <button onclick="showResultTab('outputGap')"  >Output Gap</button>
-          <button onclick="showResultTab('isCurve')"    >IS Curve</button>
-          <button onclick="showResultTab('volatility')" >Inflation Volatility</button>
+          <button onclick="showResultTab('rstar'); history.pushState({}, '', '?section=r-star')">
+            R-Star
+          </button>
+
+          <button onclick="showResultTab('outputGap'); history.pushState({}, '', '?section=output-gap')">
+            Output Gap
+          </button>
+
+          <button onclick="showResultTab('isCurve'); history.pushState({}, '', '?section=is-curve')">
+            IS Curve
+          </button>
+
+          <button onclick="showResultTab('volatility'); history.pushState({}, '', '?section=volatility')">
+            Inflation Volatility
+          </button>
         </div>
 
         <!-- Content Panels -->
