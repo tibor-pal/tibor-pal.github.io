@@ -406,7 +406,7 @@ function showLastValue(chart, canvasId) {
     chart.update();
 
     const canvas = document.getElementById(canvasId);
-    const wrapper = canvas?.closest('.chart-wrapper');
+    const wrapper = canvas?.closest('.chart-wrapper, .plot-wrapper');
 
     if (wrapper) {
       wrapper.scrollLeft = wrapper.scrollWidth;
