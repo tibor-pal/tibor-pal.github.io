@@ -170,6 +170,29 @@ async function createInflationChart() {
     plugins: [recessionPlugin, staticTooltipPlugin]
   });
 
+  if (window.innerWidth <= 768) {
+      setTimeout(() => {
+          const lastIndex = chart.data.labels.length - 1;
+
+          chart.setActiveElements(
+              chart.data.datasets.map((_, datasetIndex) => ({
+                  datasetIndex,
+                  index: lastIndex
+              }))
+          );
+
+          chart.tooltip.setActiveElements(
+              chart.data.datasets.map((_, datasetIndex) => ({
+                  datasetIndex,
+                  index: lastIndex
+              }))
+          );
+
+          chart.update();
+          scrollChartRight(canvasId);
+      }, 300);
+  }
+
   setTimeout(() => {
     if (window.innerWidth <= 768) {
       scrollChartRight('#inflation .chart-wrapper');
@@ -311,6 +334,30 @@ async function createPhillipsCurveChart() {
     ]
   });
 
+  if (window.innerWidth <= 768) {
+      setTimeout(() => {
+          const lastIndex = chart.data.labels.length - 1;
+
+          chart.setActiveElements(
+              chart.data.datasets.map((_, datasetIndex) => ({
+                  datasetIndex,
+                  index: lastIndex
+              }))
+          );
+
+          chart.tooltip.setActiveElements(
+              chart.data.datasets.map((_, datasetIndex) => ({
+                  datasetIndex,
+                  index: lastIndex
+              }))
+          );
+
+          chart.update();
+          scrollChartRight(canvasId);
+      }, 300);
+  }
+
+
   // Hide τ = 0.75 and τ = 0.25
   window.phillipsChart.setDatasetVisibility(1, false);
   window.phillipsChart.setDatasetVisibility(3, false);
@@ -366,6 +413,7 @@ function showSection(id) {
 /* =========================
    RESIZE & SCROLLING
 ========================= */
+
 
 function scrollChartRight(selector) {
   const wrapper = document.querySelector(selector);
