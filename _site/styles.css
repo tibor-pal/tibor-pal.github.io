@@ -369,3 +369,14 @@ body {
   min-height: 0 !important;
   height: auto !important;
 }
+@media (max-width: 768px) {
+  .chart-scroll-inner {
+    width: 800px;
+    min-width: 800px;
+  }
+
+  .chart-scroll-inner canvas {
+    width: 800px !important;
+    max-width: none !important;
+  }
+}

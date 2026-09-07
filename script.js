@@ -65,8 +65,11 @@ function createChart() {
     },
     plugins: [recessionPlugin, staticTooltipPlugin]
   });
+
+  showLastValue(timeChart, 'timeChart');
+
 }
-showLastValue(timeChart, 'timeChart');
+
 
 /* =========================
    INFLATION CHART
@@ -172,11 +175,7 @@ async function createInflationChart() {
 
 showLastValue(window.inflationChart, 'chart-inflation');
 
-  setTimeout(() => {
-    if (window.innerWidth <= 768) {
-      scrollChartRight('#inflation .chart-wrapper');
-    }
-  }, 250);
+
 }
 
 /* =========================
@@ -322,11 +321,7 @@ showLastValue(window.phillipsChart, 'chart-phillipscurve');
 
   window.phillipsChart.update();
 
-  setTimeout(() => {
-    if (window.innerWidth <= 768) {
-      scrollChartRight('#phillipscurve .chart-wrapper');
-    }
-  }, 250);
+
 }
 
 
@@ -368,10 +363,12 @@ function showSection(id) {
     setTimeout(() => { createInflationChart(); }, 50);
   }
 
-/* =========================
-   RESIZE & SCROLLING
-========================= */
+} // closes the lazy-load if/else chain
+}   // closes showSection()
 
+/* =========================
+ RESIZE & SCROLLING
+========================= */
 
 function scrollChartRight(canvasId) {
     const canvas = document.getElementById(canvasId);
