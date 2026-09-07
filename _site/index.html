@@ -1052,19 +1052,9 @@ window[canvasId + 'Chart'] = new Chart(ctx, {
   },
 
   plugins: [
-    recessionPlugin,
-    staticTooltipPlugin
+    recessionPlugin
   ]
 });
-}
-
-// On mobile, automatically show the most recent observations
-if (window.innerWidth <= 768) {
-  const container = document.getElementById(canvasId).parentElement;
-
-  setTimeout(() => {
-    container.scrollLeft = container.scrollWidth;
-  }, 100);
 }
 
     /* =========================
@@ -1320,8 +1310,7 @@ if (window.innerWidth <= 768) {
         },
 
         plugins: [
-          recessionPlugin,
-          staticTooltipPlugin
+          recessionPlugin
         ]
       });
 
@@ -1548,7 +1537,6 @@ if (window.innerWidth <= 768) {
         },
         plugins: [
           recessionPlugin
-        ,staticTooltipPlugin
         ]
       });
 
@@ -1810,7 +1798,6 @@ if (window.innerWidth <= 768) {
 
         plugins: [
           recessionPlugin
-      ,staticTooltipPlugin
         ]
       });
 
