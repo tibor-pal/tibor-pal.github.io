@@ -507,7 +507,9 @@ const yAxisLabel =
     ? ''
     : 'Percent';
 
-const showLegend = canvasId === 'chart-rstar';
+    const showLegend =
+      canvasId === 'chart-rstar' ||
+      canvasId === 'chart-outputGap';
 
 if (!data) {
   console.warn('No data loaded');
