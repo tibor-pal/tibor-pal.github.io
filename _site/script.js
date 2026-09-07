@@ -371,62 +371,39 @@ function showSection(id) {
 ========================= */
 
 function scrollChartRight(canvasId) {
-    const canvas = document.getElementById(canvasId);
-    const wrapper = canvas?.closest('.chart-wrapper');
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
 
-    if (wrapper) {
-        wrapper.scrollLeft = wrapper.scrollWidth - wrapper.clientWidth;
-    }
+  const wrapper = canvas.closest('.chart-wrapper, .plot-wrapper');
+  if (!wrapper) return;
+
+  requestAnimationFrame(() => {
+    wrapper.scrollLeft = wrapper.scrollWidth;
+
+    requestAnimationFrame(() => {
+      wrapper.scrollLeft = wrapper.scrollWidth;
+    });
+  });
 }
 
 function showLastValue(chart, canvasId) {
-  if (!chart || window.innerWidth > 768) return;
+    if (window.innerWidth > 768) return;
 
-  setTimeout(() => {
-    const activeElements = [];
+    setTimeout(() => {
+        const lastIndex = chart.data.datasets[0].data.length - 1;
 
-    chart.data.datasets.forEach((dataset, datasetIndex) => {
-      for (let i = dataset.data.length - 1; i >= 0; i--) {
-        const point = dataset.data[i];
-        const y = point && typeof point === 'object' ? point.y : point;
+        const elements = chart.data.datasets
+            .map((dataset, datasetIndex) => ({
+                datasetIndex,
+                index: Math.min(lastIndex, dataset.data.length - 1)
+            }));
 
-        if (y !== null && y !== undefined && !Number.isNaN(Number(y))) {
-          activeElements.push({
-            datasetIndex: datasetIndex,
-            index: i
-          });
-          break;
-        }
-      }
-    });
+        chart.setActiveElements(elements);
+        chart.tooltip.setActiveElements(elements, {x: 0, y: 0});
+        chart.update();
 
-    if (!activeElements.length) return;
-
-    const first = activeElements[0];
-    const meta = chart.getDatasetMeta(first.datasetIndex);
-    const point = meta.data[first.index];
-
-    if (!point) return;
-
-    chart.setActiveElements(activeElements);
-
-    chart.tooltip.setActiveElements(
-      activeElements,
-      {
-        x: point.x,
-        y: point.y
-      }
-    );
-
-    chart.update('none');
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
         scrollChartRight(canvasId);
-      });
-    });
-
-  }, 400);
+    }, 300);
 }
 
 /* =========================
