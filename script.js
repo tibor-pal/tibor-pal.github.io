@@ -366,12 +366,6 @@ function showSection(id) {
 /* =========================
    RESIZE & SCROLLING
 ========================= */
-function resizeAllCharts() {
-  Chart.helpers.each(Chart.instances, function(instance) {
-    instance.resize();
-  });
-}
-window.addEventListener('resize', resizeAllCharts);
 
 function scrollChartRight(selector) {
   const wrapper = document.querySelector(selector);

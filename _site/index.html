@@ -594,6 +594,81 @@ if (canvasId === 'chart-rstar') {
     }
   ];
 
+  } else if (canvasId === 'chart-outputGap') {
+
+
+    datasets = [
+
+      // 68% CI LOWER BOUND
+      {
+        label: '',
+        data: data.y95_lower,
+        borderColor: 'transparent',
+        borderWidth: 0,
+        backgroundColor: 'transparent',
+        pointRadius: 0,
+        fill: false,
+        tension: 0.1
+      },
+
+      // 68% CI UPPER BOUND
+      {
+        label: '68% CI',
+        data: data.y95_upper,
+        borderColor: 'transparent',
+        borderWidth: 0,
+        backgroundColor: 'rgba(135, 206, 235, 0.45)',
+        pointRadius: 0,
+        fill: {
+          target: 0
+        },
+        tension: 0.1
+      },
+
+      // aaGAS
+      {
+        label: 'aaGAS',
+        data: data.yGap,
+        borderColor: '#0072BD',
+        borderWidth: 2.5,
+        borderDash: [],
+        backgroundColor: 'transparent',
+        fill: false,
+        tension: 0.1,
+        pointRadius: 0
+      },
+
+      // CBO
+      {
+        label: 'CBO',
+        data: data.cbo,
+        borderColor: '#D95319',
+        borderWidth: 2.5,
+        borderDash: [12, 8],
+        backgroundColor: 'transparent',
+        fill: false,
+        tension: 0.1,
+        pointRadius: 0
+      },
+
+      // HLW
+      {
+        label: 'HLW',
+        data: data.hlw_yGap,
+        borderColor: '#7E2F8E',
+        borderWidth: 2.5,
+        borderDash: [12, 8],
+        backgroundColor: 'transparent',
+        fill: false,
+        tension: 0.1,
+        pointRadius: 0
+      }
+
+    ];
+
+
+
+
 } else {
 
   /*
@@ -1628,10 +1703,19 @@ window[canvasId + 'Chart'] = new Chart(ctx, {
         break;
 
         case 'outputGap':
-          if (!window.outputGapChart) {
-            createOutputGapChart();
-          }
+          createChart(
+            ['yGap', 'hlw_yGap'],
+            ['Output Gap'],
+            'Output Gap in the United States',
+            'chart-outputGap'
+          );
           break;
+
+    //    case 'outputGap':
+    //      if (!window.outputGapChart) {
+    //        createOutputGapChart();
+    //      }
+    //      break;
 
       case 'isCurve':
         createChart(
