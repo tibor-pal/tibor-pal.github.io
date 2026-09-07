@@ -66,7 +66,7 @@ function createChart() {
     plugins: [recessionPlugin, staticTooltipPlugin]
   });
 }
-
+showLastValue(timeChart, 'timeChart');
 
 /* =========================
    INFLATION CHART
@@ -170,28 +170,7 @@ async function createInflationChart() {
     plugins: [recessionPlugin, staticTooltipPlugin]
   });
 
-  if (window.innerWidth <= 768) {
-      setTimeout(() => {
-          const lastIndex = chart.data.labels.length - 1;
-
-          chart.setActiveElements(
-              chart.data.datasets.map((_, datasetIndex) => ({
-                  datasetIndex,
-                  index: lastIndex
-              }))
-          );
-
-          chart.tooltip.setActiveElements(
-              chart.data.datasets.map((_, datasetIndex) => ({
-                  datasetIndex,
-                  index: lastIndex
-              }))
-          );
-
-          chart.update();
-          scrollChartRight(canvasId);
-      }, 300);
-  }
+showLastValue(window.inflationChart, 'chart-inflation');
 
   setTimeout(() => {
     if (window.innerWidth <= 768) {
@@ -334,28 +313,7 @@ async function createPhillipsCurveChart() {
     ]
   });
 
-  if (window.innerWidth <= 768) {
-      setTimeout(() => {
-          const lastIndex = chart.data.labels.length - 1;
-
-          chart.setActiveElements(
-              chart.data.datasets.map((_, datasetIndex) => ({
-                  datasetIndex,
-                  index: lastIndex
-              }))
-          );
-
-          chart.tooltip.setActiveElements(
-              chart.data.datasets.map((_, datasetIndex) => ({
-                  datasetIndex,
-                  index: lastIndex
-              }))
-          );
-
-          chart.update();
-          scrollChartRight(canvasId);
-      }, 300);
-  }
+showLastValue(window.phillipsChart, 'chart-phillipscurve');
 
 
   // Hide τ = 0.75 and τ = 0.25
@@ -415,15 +373,33 @@ function showSection(id) {
 ========================= */
 
 
-function scrollChartRight(selector) {
-  const wrapper = document.querySelector(selector);
-  if (!wrapper) return;
+function scrollChartRight(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    const wrapper = canvas?.closest('.chart-wrapper');
 
-  const doScroll = () => { wrapper.scrollLeft = wrapper.scrollWidth; };
-  doScroll();
-  requestAnimationFrame(doScroll);
-  setTimeout(doScroll, 100);
-  setTimeout(doScroll, 300);
+    if (wrapper) {
+        wrapper.scrollLeft = wrapper.scrollWidth - wrapper.clientWidth;
+    }
+}
+
+function showLastValue(chart, canvasId) {
+    if (window.innerWidth > 768) return;
+
+    setTimeout(() => {
+        const lastIndex = chart.data.datasets[0].data.length - 1;
+
+        const elements = chart.data.datasets
+            .map((dataset, datasetIndex) => ({
+                datasetIndex,
+                index: Math.min(lastIndex, dataset.data.length - 1)
+            }));
+
+        chart.setActiveElements(elements);
+        chart.tooltip.setActiveElements(elements, {x: 0, y: 0});
+        chart.update();
+
+        scrollChartRight(canvasId);
+    }, 300);
 }
 
 /* =========================
