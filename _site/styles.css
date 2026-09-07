@@ -5,7 +5,7 @@ body {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
-  height: 100%;
+  height: auto;
   background-color: #f5f5f5;
   overflow-x: hidden;
 }
@@ -354,4 +354,19 @@ canvas.responsive-canvas {
     height: auto;
     display: block;
   }
+}
+
+html,
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  height: auto;
+  background-color: #f5f5f5;
+  overflow-x: hidden;
+}
+
+.container {
+  min-height: 0 !important;
+  height: auto !important;
 }
