@@ -387,23 +387,31 @@ function scrollChartRight(canvasId) {
 }
 
 function showLastValue(chart, canvasId) {
-    if (window.innerWidth > 768) return;
+  if (!chart || window.innerWidth > 768) return;
 
-    setTimeout(() => {
-        const lastIndex = chart.data.datasets[0].data.length - 1;
+  setTimeout(() => {
+    const lastIndex = chart.data.datasets[0].data.length - 1;
 
-        const elements = chart.data.datasets
-            .map((dataset, datasetIndex) => ({
-                datasetIndex,
-                index: Math.min(lastIndex, dataset.data.length - 1)
-            }));
+    const elements = chart.data.datasets.map((dataset, datasetIndex) => ({
+      datasetIndex,
+      index: Math.min(lastIndex, dataset.data.length - 1)
+    }));
 
-        chart.setActiveElements(elements);
-        chart.tooltip.setActiveElements(elements, {x: 0, y: 0});
-        chart.update();
+    chart.setActiveElements(elements);
+    chart.tooltip.setActiveElements(elements, {
+      x: 0,
+      y: 0
+    });
 
-        scrollChartRight(canvasId);
-    }, 300);
+    chart.update();
+
+    const canvas = document.getElementById(canvasId);
+    const wrapper = canvas?.closest('.chart-wrapper');
+
+    if (wrapper) {
+      wrapper.scrollLeft = wrapper.scrollWidth;
+    }
+  }, 300);
 }
 
 /* =========================
