@@ -305,7 +305,7 @@
               </div>
             </div>
             <p class="note-text">
-               Note: IQR denotes the interquartile range. Core PCE refers to the annualized inflation rate of the Core Personal Consumption Expenditures price index. Curves can be hidden or shown by clicking their labels in the legend. Shaded vertical areas indicate U.S. recessions as dated by the National Bureau of Economic Research (NBER).
+               Note: Conditional inflation quantiles show how inflation varies across its conditional distribution. IQR denotes the interquartile range. Core PCE refers to the annualized inflation rate of the Core Personal Consumption Expenditures price index. Shaded vertical areas indicate U.S. recessions as dated by the National Bureau of Economic Research (NBER). Curves can be hidden or shown by clicking their labels in the legend.
             <!--             The Q1 2026 estimates will be available by mid-Jun.-->
             </p>
           </div>
@@ -322,7 +322,7 @@
               </div>
             </div>
             <p class="note-text">
-               Note: Curves can be hidden or shown by clicking their labels in the legend. Shaded vertical areas indicate U.S. recessions as dated by the National Bureau of Economic Research (NBER).
+              Note: The plotted Phillips Curve illustrates how the sensitivity of inflation to the CBO output gap varies across the conditional inflation distribution. Shaded vertical areas indicate U.S. recessions as dated by the National Bureau of Economic Research (NBER). Curves can be hidden or shown by clicking their labels in the legend.
         <!--             The Q1 2026 estimates will be available by mid-Jun.-->
             </p>
           </div>
@@ -331,12 +331,12 @@
 
           <p class="source-text">
             Source: Calculations use the methodology (sDMQ-TV(L) specification) outlined in
-              <a href="Pal_The Shape of the Phillips Curve_Beyond the Mean_2026 May_wp.pdf" target="_blank">
-                <em>Pál, Tibor:</em> The Shape of the Phillips Curve: Beyond the Mean
-
-              <em>(2026, Working Paper).</em>
-
-                        </a><br />
+            <a href="Pal_The Shape of the Phillips Curve_Beyond the Mean_2026 May_wp.pdf" target="_blank">
+              <em>Pál, Tibor:</em> The Shape of the Phillips Curve: Beyond the Mean
+            </a>
+            (2026, Working Paper). The working paper is currently being revised; the estimates shown here
+            are based on the revised estimation and may differ from those reported in the current
+            working-paper version.
           </p>
 
       </section>
@@ -378,55 +378,63 @@
 
     const staticTooltipPlugin = {
 
-      id: 'staticTooltipPlugin',
+  id: 'staticTooltipPlugin',
 
-      afterRender(chart) {
+  afterRender(chart) {
 
-        // run only once
-        if (chart._tooltipInitialized) return;
+    if (chart._tooltipInitialized) return;
 
-        chart._tooltipInitialized = true;
+    chart._tooltipInitialized = true;
 
-        setTimeout(() => {
+    setTimeout(() => {
 
-          const data = chart.data.datasets[0].data;
+      const data = chart.data.datasets[0].data;
 
-          let lastIndex = data.length - 1;
+      let lastIndex = data.length - 1;
 
-          while (
-            lastIndex >= 0 &&
-            (data[lastIndex].y === undefined ||
-             data[lastIndex].y === null ||
-             isNaN(data[lastIndex].y))
-          ) {
-            lastIndex--;
-          }
-
-          if (lastIndex < 0) return;
-          const activeElements =
-            chart.data.datasets.map((dataset, datasetIndex) => ({
-              datasetIndex,
-              index: lastIndex
-            }));
-
-          const point =
-            chart.getDatasetMeta(0).data[lastIndex];
-
-          chart.setActiveElements(activeElements);
-
-          chart.tooltip.setActiveElements(
-            activeElements,
-            {
-              x: point.x,
-              y: point.y
-            }
-          );
-
-          chart.update();
-
-        }, 150); // important for mobile rendering
+      while (
+        lastIndex >= 0 &&
+        (data[lastIndex].y === undefined ||
+         data[lastIndex].y === null ||
+         isNaN(data[lastIndex].y))
+      ) {
+        lastIndex--;
       }
-    };
+
+      if (lastIndex < 0) return;
+
+      let activeElements =
+        chart.data.datasets.map((dataset, datasetIndex) => ({
+          datasetIndex,
+          index: lastIndex
+        }));
+
+      // ONLY restrict the static tooltip for the inflation dynamics chart
+      if (chart.options.showOnlyLastQuantiles) {
+        activeElements = activeElements.filter(
+          ({ datasetIndex }) =>
+            datasetIndex === 2 || datasetIndex === 6
+        );
+      }
+
+      const point =
+        chart.getDatasetMeta(0).data[lastIndex];
+
+      chart.setActiveElements(activeElements);
+
+      chart.tooltip.setActiveElements(
+        activeElements,
+        {
+          x: point.x,
+          y: point.y
+        }
+      );
+
+      chart.update();
+
+    }, 150);
+  }
+};
 
 
     let timeChart = null;
@@ -525,6 +533,8 @@
         k50: parseSeries('k50'),
         k25: parseSeries('k25'),
         k05: parseSeries('k05'),
+
+        kMean: parseSeries('kMean'), // implied cond mean
 
         // realized inflation
         corePCE: parseSeries('corePCE')
@@ -1016,6 +1026,11 @@ window[canvasId + 'Chart'] = new Chart(ctx, {
 
       tooltip: {
 
+
+    filter: (tooltipItem) =>
+      tooltipItem.chart.isDatasetVisible(tooltipItem.datasetIndex),
+
+
         mode: 'index',
         intersect: false,
 
@@ -1025,7 +1040,7 @@ window[canvasId + 'Chart'] = new Chart(ctx, {
           return !context.dataset.label.includes('CI');
           },
 
-        backgroundColor: 'rgba(0,0,0,0.4)',
+        backgroundColor: 'rgba(0,0,0,0.35)',
         borderColor: 'rgba(255,255,255,0.12)',
         borderWidth: 1,
         cornerRadius: 8,
@@ -1292,7 +1307,8 @@ if (window.innerWidth <= 768) {
             },
 
             tooltip: {
-
+              filter: (tooltipItem) =>
+                tooltipItem.chart.isDatasetVisible(tooltipItem.datasetIndex),
               mode: 'index',
               intersect: false,
 
@@ -1390,7 +1406,7 @@ if (window.innerWidth <= 768) {
               label: '𝜏 = 0.95',
               data: data.q95,
               borderColor: '#3b2418',
-              borderWidth: 2,
+              borderWidth: 2.5,
               pointRadius: 0
             },
             {
@@ -1404,7 +1420,7 @@ if (window.innerWidth <= 768) {
               label: '𝜏 = 0.05',
               data: data.q05,
               borderColor: '#e6a400',
-              borderWidth: 2,
+              borderWidth: 2.5,
               pointRadius: 0
             },
             {
@@ -1417,6 +1433,7 @@ if (window.innerWidth <= 768) {
           ]
         },
         options: {
+          showOnlyLastQuantiles: true,
           responsive: true,
           maintainAspectRatio: false,
 
@@ -1431,7 +1448,7 @@ if (window.innerWidth <= 768) {
                 displayFormats: { year: 'yyyy' }
               },
 
-              min: new Date(startYear, 0, 1).getTime(),
+              min: new Date(2000, 0, 1).getTime(),
               max: data.q50[data.q50.length - 1].x.getTime(),
 
               ticks: {
@@ -1540,9 +1557,11 @@ if (window.innerWidth <= 768) {
             },
 
             tooltip: {
+              filter: (tooltipItem) =>
+                tooltipItem.chart.isDatasetVisible(tooltipItem.datasetIndex),
               mode: 'index',
               intersect: false,
-              backgroundColor: 'rgba(0,0,0,0.4)',
+              backgroundColor: 'rgba(0,0,0,0.35)',
         borderColor: 'rgba(255,255,255,0.12)',
         borderWidth: 1,
         cornerRadius: 8,
@@ -1604,7 +1623,7 @@ if (window.innerWidth <= 768) {
         data: {
           datasets: [
             {
-              label: '𝜏 = 0.95',
+              label: 'Q95',
               data: data.k95,
               borderColor: '#3b2418',
               borderWidth: 2.5,
@@ -1613,40 +1632,51 @@ if (window.innerWidth <= 768) {
             },
 
             {
-              label: '𝜏 = 0.75',
+              label: 'Q75',
               data: data.k75,
               borderColor: '#d95f02',
               borderWidth: 2.5,
               pointRadius: 0,
-              tension: 0.1
+              tension: 0.1,
+                hidden: true
             },
 
             {
-              label: '𝜏 = 0.50',
+              label: 'Q50',
               data: data.k50,
               borderColor: '#0072BD',
               borderDash: [6,4],
               borderWidth: 2.5,
               pointRadius: 0,
-              tension: 0.1
+              tension: 0.1,
+                hidden: true
             },
 
             {
-              label: '𝜏 = 0.25',
+              label: 'Q25',
               data: data.k25,
               borderColor: '#66a61e',
               borderWidth: 2.5,
               pointRadius: 0,
-              tension: 0.1
+              tension: 0.1,
+                hidden: true
             },
 
             {
-              label: '𝜏 = 0.05',
+              label: 'Q05',
               data: data.k05,
               borderColor: '#e6a400',
               borderWidth: 2.5,
               pointRadius: 0,
               tension: 0.1
+            },
+            {
+                label: 'Implied conditional mean',
+                data: data.kMean,
+                //borderColor: '#7E57C2',
+                borderColor: '#6A3D9A',
+                borderWidth: 3,
+                pointRadius: 0
             }
           ]
         },
@@ -1668,7 +1698,7 @@ if (window.innerWidth <= 768) {
                 }
               },
 
-              min: new Date(startYear, 0, 1).getTime(),
+              min: new Date(1970, 0, 1).getTime(),
               max: data.q50[data.q50.length - 1].x.getTime(),
 
               ticks: {
@@ -1782,9 +1812,11 @@ if (window.innerWidth <= 768) {
             },
 
             tooltip: {
+              filter: (tooltipItem) =>
+                tooltipItem.chart.isDatasetVisible(tooltipItem.datasetIndex),
                 mode: 'index',
                 intersect: false,
-                backgroundColor: 'rgba(0,0,0,0.4)',
+                backgroundColor: 'rgba(0,0,0,0.35)',
           borderColor: 'rgba(255,255,255,0.12)',
           borderWidth: 1,
           cornerRadius: 8,
@@ -1877,7 +1909,7 @@ if (window.innerWidth <= 768) {
       case 'rstar':
         createChart(
           ['rStar_med', 'rStar_sm', 'hlw_rStar'],
-          ['aaGAS (Filtered)', 'aaGAS (smoothed)', 'HLW (Filtered)'],
+          ['aaGAS (Filtered)', 'aaGAS (Smoothed)', 'HLW (Filtered)'],
           'The Natural Rate of Interest (R-Star) in the United States',
           'chart-rstar', { yMin: 0 }
         );
