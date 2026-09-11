@@ -322,21 +322,24 @@
               </div>
             </div>
             <p class="note-text">
-              Note: The plotted Phillips Curve illustrates how the sensitivity of inflation to the CBO output gap varies across the conditional inflation distribution. Shaded vertical areas indicate U.S. recessions as dated by the National Bureau of Economic Research (NBER). Curves can be hidden or shown by clicking their labels in the legend.
-        <!--             The Q1 2026 estimates will be available by mid-Jun.-->
+              Note: The plotted Phillips Curve illustrates how the sensitivity of inflation to real marginal cost, proxied by the
+              <a href="?section=output-gap"
+         onclick="showSection('r-star'); showResultTab('outputGap'); history.pushState({ section: 'r-star' }, '', '?section=output-gap'); return false;">
+        CBO output gap,
+      </a>
+              varies across the conditional inflation distribution. Shaded vertical areas indicate U.S. recessions as dated by the National Bureau of Economic Research (NBER). Curves can be hidden or shown by clicking their labels in the legend.
+              <!-- The Q1 2026 estimates will be available by mid-Jun.-->
             </p>
           </div>
 
 
 
           <p class="source-text">
-            Source: Calculations use the methodology (sDMQ-TV(L) specification) outlined in
+            Source: Calculations use the methodology outlined in
             <a href="Pal_The Shape of the Phillips Curve_Beyond the Mean_2026 May_wp.pdf" target="_blank">
               <em>Pál, Tibor:</em> The Shape of the Phillips Curve: Beyond the Mean
             </a>
-            (2026, Working Paper). The working paper is currently being revised; the estimates shown here
-            are based on the revised estimation and may differ from those reported in the current
-            working-paper version.
+            (2026, Working Paper). The working paper is currently being revised; the estimates shown here are based on the revised estimation and may differ from those reported in the current version.
           </p>
 
       </section>
@@ -1562,6 +1565,16 @@ if (window.innerWidth <= 768) {
               mode: 'index',
               intersect: false,
               backgroundColor: 'rgba(0,0,0,0.35)',
+
+              filter: function(context) {
+                return [
+                  '𝜏 = 0.95',
+            //      '𝜏 = 0.75',
+                  'Core PCE'
+                ].includes(context.dataset.label);
+              },
+
+
         borderColor: 'rgba(255,255,255,0.12)',
         borderWidth: 1,
         cornerRadius: 8,
