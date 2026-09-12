@@ -380,7 +380,7 @@ body {
     max-width: none !important;
   }
 }
-
+/*mobile photo appearence*/
 @media (max-width: 768px) {
   .profile-photo {
     width: 170px;
