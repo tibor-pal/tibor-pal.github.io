@@ -423,12 +423,12 @@
         }));
 
       // ONLY restrict the static tooltip for the inflation dynamics chart
-      if (chart.options.showOnlyLastQuantiles) {
-        activeElements = activeElements.filter(
-          ({ datasetIndex }) =>
-            datasetIndex === 2 || datasetIndex === 6
-        );
-      }
+    //  if (chart.options.showOnlyLastQuantiles) {
+    //    activeElements = activeElements.filter(
+    //      ({ datasetIndex }) =>
+    //        datasetIndex === 2 || datasetIndex === 6
+    //    );
+    //  }
 
       const point =
         chart.getDatasetMeta(0).data[lastIndex];
@@ -1577,11 +1577,12 @@ if (window.innerWidth <= 768) {
               backgroundColor: 'rgba(0,0,0,0.35)',
 
               filter: function(context) {
-                return [
-                  '𝜏 = 0.95',
+                return true;
+            //    return [
+            //      '𝜏 = 0.95',
             //      '𝜏 = 0.75',
-                  'Core PCE'
-                ].includes(context.dataset.label);
+            //      'Core PCE'
+            //    ].includes(context.dataset.label);
               },
 
 
