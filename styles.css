@@ -383,7 +383,7 @@ body {
 
 @media (max-width: 768px) {
   .profile-photo {
-    width: 140px;
+    width: 150px;
     height: auto;
   }
 }
