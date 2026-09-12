@@ -380,3 +380,10 @@ body {
     max-width: none !important;
   }
 }
+
+@media (max-width: 768px) {
+  .profile-photo {
+    width: 180px;
+    height: auto;
+  }
+}
