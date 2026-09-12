@@ -87,8 +87,8 @@ min-height: auto;
 
 .profile-photo {
   float: left;
-  width: 140px;
-  height: 140px;
+  width: 180px;
+  height: 180px;
   object-fit: cover;
   border-radius: 8px;
   margin-right: 15px;
@@ -378,5 +378,12 @@ body {
   .chart-scroll-inner canvas {
     width: 800px !important;
     max-width: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-photo {
+    width: 140px;
+    height: auto;
   }
 }
