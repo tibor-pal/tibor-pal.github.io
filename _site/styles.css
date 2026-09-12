@@ -87,8 +87,8 @@ min-height: auto;
 
 .profile-photo {
   float: left;
-  width: 160px;
-  height: 160px;
+  width: 140px;
+  height: 140px;
   object-fit: cover;
   border-radius: 8px;
   margin-right: 15px;
